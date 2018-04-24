@@ -2,6 +2,7 @@ package com.gwb.superrecycleview.adapter;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,21 +89,52 @@ public class HeaderAndFooterWrapper extends RecyclerView.Adapter {
         return getHeaderCount() + getInnerCount() + getFooterCount();
     }
 
+    /**
+     * 解决GridLayoutManager一行显示问题
+     *
+     * @param recyclerView
+     */
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         mInnerAdapter.onAttachedToRecyclerView(recyclerView);
-        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        final RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager instanceof GridLayoutManager) {
-            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
-            GridLayoutManager.SpanSizeLookup spanSizeLookup = gridLayoutManager.getSpanSizeLookup();
+            final GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
+            final GridLayoutManager.SpanSizeLookup spanSizeLookup = gridLayoutManager.getSpanSizeLookup();
             gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override
                 public int getSpanSize(int position) {
-                    return 0;
+                    // TODO: 2018/4/24 0024 默认是一个view占一个位置，header和footer只要让他们占据一行，就可以完美解决
+                    int viewType = getItemViewType(position);
+                    if (mHeaderViews.get(viewType) != null) {
+                        return gridLayoutManager.getSpanCount();
+                    } else if (mFooterViews.get(viewType) != null) {
+                        return gridLayoutManager.getSpanCount();
+                    }
+                    if (spanSizeLookup != null) {
+                        return spanSizeLookup.getSpanSize(position);
+                    }
+                    return 1;
                 }
             });
-            gridLayoutManager.setSpanCount(1);
+            gridLayoutManager.setSpanCount(gridLayoutManager.getSpanCount());
         }
-        super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    /**
+     * 解决StaggeredGridLayoutManager一行显示问题
+     *
+     * @param holder
+     */
+    @Override
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+        mInnerAdapter.onViewAttachedToWindow(holder);
+        int layoutPosition = holder.getLayoutPosition();
+        if (isHeaderViewPos(layoutPosition) || isFooterViewPos(layoutPosition)) {
+            ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
+            if (lp != null && lp instanceof StaggeredGridLayoutManager.LayoutParams) {
+                ((StaggeredGridLayoutManager.LayoutParams) lp).setFullSpan(true);
+            }
+        }
     }
 }
