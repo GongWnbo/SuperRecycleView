@@ -96,6 +96,7 @@ public class HeaderAndFooterWrapper extends RecyclerView.Adapter {
      */
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        // 此处为什么要添加这行,考虑到被装饰类的重写
         mInnerAdapter.onAttachedToRecyclerView(recyclerView);
         final RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager instanceof GridLayoutManager) {
@@ -128,6 +129,7 @@ public class HeaderAndFooterWrapper extends RecyclerView.Adapter {
      */
     @Override
     public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+        // 同上面
         mInnerAdapter.onViewAttachedToWindow(holder);
         int layoutPosition = holder.getLayoutPosition();
         if (isHeaderViewPos(layoutPosition) || isFooterViewPos(layoutPosition)) {
