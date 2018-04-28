@@ -41,33 +41,37 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.BaseA
     }
 
     private void initData() {
-        for (int i = 0; i < 6; i++) {
-            mList.add("我是数据" + i);
-        }
+        //        for (int i = 0; i < 6; i++) {
+        //            mList.add("我是数据" + i);
+        //        }
     }
 
     private void initAdapter() {
         mAdapter = new BaseAdapter(mList, this, R.layout.item, this);
         mHeaderAndFooterWrapper = new HeaderAndFooterWrapper(mAdapter);
 
-        // header
-        TextView tv1 = new TextView(this);
-        tv1.setText("header 1");
-        mHeaderAndFooterWrapper.addHeader(tv1);
-        ImageView iv1 = new ImageView(this);
-        iv1.setImageResource(R.mipmap.ic_launcher);
-        mHeaderAndFooterWrapper.addHeader(iv1);
-        TextView tv2 = new TextView(this);
-        tv2.setText("header 2");
-        mHeaderAndFooterWrapper.addHeader(tv2);
+        for (int i = 0; i < 20; i++) {
+            mList.add("我是数据" + i);
+        }
 
-        // footer
-        TextView tv11 = new TextView(this);
-        tv11.setText("footer 1");
-        mHeaderAndFooterWrapper.addFooter(tv11);
-        TextView tv12 = new TextView(this);
-        tv12.setText("footer 2");
-        mHeaderAndFooterWrapper.addFooter(tv12);
+        //        // header
+        //        TextView tv1 = new TextView(this);
+        //        tv1.setText("header 1");
+        //        mHeaderAndFooterWrapper.addHeader(tv1);
+        //        ImageView iv1 = new ImageView(this);
+        //        iv1.setImageResource(R.mipmap.ic_launcher);
+        //        mHeaderAndFooterWrapper.addHeader(iv1);
+        //        TextView tv2 = new TextView(this);
+        //        tv2.setText("header 2");
+        //        mHeaderAndFooterWrapper.addHeader(tv2);
+        //
+        //        // footer
+        //        TextView tv11 = new TextView(this);
+        //        tv11.setText("footer 1");
+        //        mHeaderAndFooterWrapper.addFooter(tv11);
+        //        TextView tv12 = new TextView(this);
+        //        tv12.setText("footer 2");
+        //        mHeaderAndFooterWrapper.addFooter(tv12);
 
 
         mRvShow.setLayoutManager(new GridLayoutManager(this, 3));
