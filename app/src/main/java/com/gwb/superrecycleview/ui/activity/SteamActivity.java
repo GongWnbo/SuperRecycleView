@@ -7,8 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.gwb.superrecycleview.R;
-import com.gwb.superrecycleview.ui.wedgit.SKUViewGroup;
-import com.gwb.superrecycleview.ui.wedgit.StreamLayout;
+import com.gwb.superrecycleview.ui.wedgit.FlowLayout;
 
 import java.util.Random;
 
@@ -17,10 +16,8 @@ import butterknife.ButterKnife;
 
 public class SteamActivity extends AppCompatActivity {
 
-    @BindView(R.id.streamLayout)
-    StreamLayout mStreamLayout;
-    @BindView(R.id.sku)
-    SKUViewGroup mSku;
+    @BindView(R.id.fl)
+    FlowLayout                                mFl;
     private String[] arr = {"京东", "淘宝", "阿里巴巴", "dnf", "神舟七号", "外卖小哥", "马云？？？"};
 
     @Override
@@ -31,7 +28,7 @@ public class SteamActivity extends AppCompatActivity {
         for (int i = 0; i < 20; i++) {
             Random random = new Random();
             TextView view = getView(arr[random.nextInt(arr.length)]);
-            mStreamLayout.addView(view);
+            mFl.addView(view);
         }
     }
 
