@@ -3,4 +3,15 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+
+    <color name="white">#ffffff</color>
+    <color name="grayLight">#999999</color>
+    <color name="gray">#666666</color>
+    <color name="grayDark">#333333</color>
+
+    <color name="normal">#EEEEEE</color>
+    <color name="select">#FF5C5C</color>
+    <color name="empty">#FAF9F9</color>
+
 </resources>
