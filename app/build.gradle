@@ -29,4 +29,6 @@ dependencies {
     //  butterknife
     api 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    // gson
+    compile 'com.google.code.gson:gson:2.8.4'
 }

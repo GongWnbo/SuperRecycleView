@@ -7,10 +7,14 @@
     tools:context="com.gwb.superrecycleview.ui.activity.SteamActivity">
 
     <com.gwb.superrecycleview.ui.wedgit.FlowLayout
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
         android:id="@+id/fl"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"/>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_show"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </FrameLayout>

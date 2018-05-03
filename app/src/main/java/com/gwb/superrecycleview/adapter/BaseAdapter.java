@@ -13,13 +13,13 @@ import java.util.List;
  * Created by ${GongWenbo} on 2018/3/30 0030.
  */
 
-public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
+public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> implements View.OnClickListener {
 
-    private List<T>             mDatas;
-    private Context             mContext;
-    private int                 layoutId;
-    private BaseAdapterListener mBaseAdapterListener;
-    private OnItemClickListener mOnItemClickListener;
+    private List<T>                mDatas;
+    private Context                mContext;
+    private int                    layoutId;
+    private BaseAdapterListener    mBaseAdapterListener;
+    private OnItemClickListener<T> mOnItemClickListener;
 
     public BaseAdapter(List<T> datas, Context context, @LayoutRes int layoutId, BaseAdapterListener baseAdapterListener) {
         this.mDatas = datas;
@@ -30,22 +30,17 @@ public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return BaseViewHolder.createViewHolder(mContext, parent, layoutId);
+        View view = LayoutInflater.from(mContext).inflate(layoutId, parent, false);
+        view.setOnClickListener(this);
+        return new BaseViewHolder(parent.getContext(), view);
     }
 
     @Override
-    public void onBindViewHolder(BaseViewHolder holder, final int position) {
+    public void onBindViewHolder(BaseViewHolder holder, int position) {
         if (mBaseAdapterListener != null) {
             mBaseAdapterListener.convert(holder, mDatas.get(position));
+            holder.itemView.setTag(position);
         }
-        holder.getConvertView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnItemClickListener != null) {
-                    mOnItemClickListener.onItemClick(mDatas.get(position), position);
-                }
-            }
-        });
     }
 
     @Override
@@ -53,16 +48,21 @@ public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
         return mDatas == null ? 0 : mDatas.size();
     }
 
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+    public void setOnItemClickListener(OnItemClickListener<T> onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
     }
 
-    public interface OnItemClickListener<T> {
-        void onItemClick(T t, int position);
+    @Override
+    public void onClick(View v) {
+        if (mOnItemClickListener != null) {
+            mOnItemClickListener.onItemClick((Integer) v.getTag());
+        }
     }
 
     public interface BaseAdapterListener<T> {
+
         void convert(BaseViewHolder holder, T t);
+
     }
 
 }

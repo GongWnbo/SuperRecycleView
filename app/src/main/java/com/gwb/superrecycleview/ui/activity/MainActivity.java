@@ -7,13 +7,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.BaseAdapter;
 import com.gwb.superrecycleview.adapter.BaseViewHolder;
 import com.gwb.superrecycleview.adapter.HeaderAndFooterWrapper;
+import com.gwb.superrecycleview.adapter.OnItemClickListener;
 import com.gwb.superrecycleview.utils.ToastUtil;
 
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements BaseAdapter.BaseAdapterListener<String>, BaseAdapter.OnItemClickListener<String> {
+public class MainActivity extends AppCompatActivity implements BaseAdapter.BaseAdapterListener<String>, OnItemClickListener<String> {
 
     @BindView(R.id.rv_show)
     RecyclerView mRvShow;
@@ -84,11 +83,6 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.BaseA
         holder.setTitle(R.id.tv, str);
     }
 
-    @Override
-    public void onItemClick(String str, int position) {
-        ToastUtil.showToast(this, str + "位置" + position);
-    }
-
     @OnClick({R.id.btn_linear, R.id.btn_grid, R.id.btn_stagger})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -106,4 +100,8 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.BaseA
         mHeaderAndFooterWrapper.onAttachedToRecyclerView(mRvShow);
     }
 
+    @Override
+    public void onItemClick(int position) {
+        ToastUtil.showToast(this,  "位置" + position);
+    }
 }
