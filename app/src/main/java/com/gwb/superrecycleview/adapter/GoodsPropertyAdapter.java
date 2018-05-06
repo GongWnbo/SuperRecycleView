@@ -17,7 +17,10 @@ import com.gwb.superrecycleview.entity.GoodsPropertyBean;
 import com.gwb.superrecycleview.ui.wedgit.FlowLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by ${GongWenbo} on 2018/3/30 0030.
@@ -34,7 +37,7 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private Context                                mContext;
     private int                                    layoutId;
     private TextView[][]                           mTextViews;
-    private SimpleArrayMap<Integer, String>       sam  = new SimpleArrayMap<>();
+    private HashMap<Integer, String>              sam  = new HashMap<>();
     private SimpleArrayMap<Integer, List<String>> sams = new SimpleArrayMap<>();
 
     public GoodsPropertyAdapter(List<GoodsPropertyBean.AttributesBean> attributes, List<GoodsPropertyBean.StockGoodsBean> stockGoods, Context context, @LayoutRes int layoutId) {
@@ -71,6 +74,8 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     }
 
+    private int index = 0;
+
     public TextView getTextView(final String title, final BaseViewHolder holder) {
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final TextView tv = new TextView(mContext);
@@ -91,6 +96,7 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                     if (str.equals(title)) {
                         return;
                     } else {
+                        sam.clear();
                         sam.put(position, title);
                     }
                 } else {
@@ -112,30 +118,68 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                     List<GoodsPropertyBean.StockGoodsBean.GoodsInfoBean> goodsInfo = stockGoodsBean.getGoodsInfo();
                     boolean flag = false;
                     for (int j = 0; j < goodsInfo.size(); j++) {
-                        String title = sam.get(j);
                         GoodsPropertyBean.StockGoodsBean.GoodsInfoBean goodsInfoBean = goodsInfo.get(j);
                         String tabValue = goodsInfoBean.getTabValue();
-                        if (!TextUtils.isEmpty(title) && !title.equals(tabValue)) {
-                            break;
-                        }
-                        if (j == goodsInfo.size() - 1) {
-                            flag = true;
+                        List<String> list = sams.get(j);
+                        Set<Integer> keySet = sam.keySet();
+                        if (keySet.size() > 1) {
+                            Iterator<Integer> iterator = keySet.iterator();
+                            while (iterator.hasNext()) {
+                                Integer key = iterator.next();
+                                String arr = sam.get(key);
+                                if (key == j) {
+                                    if (!list.contains(tabValue)) {
+                                        list.add(tabValue);
+                                    }
+                                    if (arr.equals(tabValue)) {
+                                        index++;
+                                    }
+                                }
+                            }
+                            if (index == keySet.size()) {
+                                flag = true;
+                            }
+                        } else {
+                            if (position == j) {
+                                if (!list.contains(tabValue)) {
+                                    list.add(tabValue);
+                                }
+                            }
+                            Iterator<Integer> iterator = keySet.iterator();
+                            while (iterator.hasNext()) {
+                                Integer key = iterator.next();
+                                String arr = sam.get(key);
+                                if (arr.equals(tabValue)) {
+                                    flag = true;
+                                }
+                            }
                         }
                     }
+                    index = 0;
                     if (flag) {
                         for (int j = 0; j < goodsInfo.size(); j++) {
-                            String title = sam.get(j);
+                            String tabValue = goodsInfo.get(j).getTabValue();
                             List<String> list = sams.get(j);
-                            GoodsPropertyBean.StockGoodsBean.GoodsInfoBean goodsInfoBean = goodsInfo.get(j);
-                            String tabValue = goodsInfoBean.getTabValue();
-                            if (!TextUtils.isEmpty(title) && !title.equals(tabValue)) {
-                                break;
-                            }
                             if (!list.contains(tabValue)) {
                                 list.add(tabValue);
                             }
                         }
+                        flag = false;
                     }
+                    //                    if (flag) {
+                    //                        for (int j = 0; j < goodsInfo.size(); j++) {
+                    //                            String title = sam.get(j);
+                    //                            List<String> list = sams.get(j);
+                    //                            GoodsPropertyBean.StockGoodsBean.GoodsInfoBean goodsInfoBean = goodsInfo.get(j);
+                    //                            String tabValue = goodsInfoBean.getTabValue();
+                    //                            if (!TextUtils.isEmpty(title) && !title.equals(tabValue)) {
+                    //                                break;
+                    //                            }
+                    //                            if (!list.contains(tabValue)) {
+                    //                                list.add(tabValue);
+                    //                            }
+                    //                        }
+                    //                    }
                 }
                 // TODO: 2018/5/6 根据商品的状态绘制
                 for (int i = 0; i < mTextViews.length; i++) {

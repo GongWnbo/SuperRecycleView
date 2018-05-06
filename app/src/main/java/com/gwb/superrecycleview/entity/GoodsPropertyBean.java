@@ -34,7 +34,7 @@ public class GoodsPropertyBean {
          * tabName : 颜色
          */
 
-        private int tabID;
+        private int          tabID;
         private String       tabName;
         private List<String> attributesItem;
 
@@ -69,7 +69,7 @@ public class GoodsPropertyBean {
          * goodsInfo : [{"tabID":0,"tabName":"颜色","tabValue":"白"},{"tabID":1,"tabName":"型号","tabValue":"X"},{"tabID":2,"tabName":"衣服","tabValue":"羽绒服"},{"tabID":3,"tabName":"大小","tabValue":"中"}]
          */
 
-        private int goodsID;
+        private int                 goodsID;
         private List<GoodsInfoBean> goodsInfo;
 
         public int getGoodsID() {
@@ -95,9 +95,14 @@ public class GoodsPropertyBean {
              * tabValue : 白
              */
 
-            private int tabID;
+            private int    tabID;
             private String tabName;
             private String tabValue;
+
+            @Override
+            public String toString() {
+                return "tabValue=" + tabValue;
+            }
 
             public int getTabID() {
                 return tabID;
