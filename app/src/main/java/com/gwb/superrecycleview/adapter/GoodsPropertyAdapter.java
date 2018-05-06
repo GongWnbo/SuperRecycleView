@@ -34,8 +34,8 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private Context                                mContext;
     private int                                    layoutId;
     private TextView[][]                           mTextViews;
-    private List<String>                    selects = new ArrayList<>();
-    private SimpleArrayMap<Integer, String> sam     = new SimpleArrayMap<>();
+    private SimpleArrayMap<Integer, String>       sam  = new SimpleArrayMap<>();
+    private SimpleArrayMap<Integer, List<String>> sams = new SimpleArrayMap<>();
 
     public GoodsPropertyAdapter(List<GoodsPropertyBean.AttributesBean> attributes, List<GoodsPropertyBean.StockGoodsBean> stockGoods, Context context, @LayoutRes int layoutId) {
         this.mAttributes = attributes;
@@ -68,6 +68,7 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             textViews[i] = textView;
         }
         mTextViews[position] = textViews;
+
     }
 
     public TextView getTextView(final String title, final BaseViewHolder holder) {
@@ -84,47 +85,82 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             public void onClick(View v) {
                 int position = holder.getLayoutPosition();
                 Log.d(TAG, "position== " + position);
-                TextView[] textViews = mTextViews[position];
-                // TODO: 2018/5/4 0004 现在偷懒，默认把所有的都给初始化，后面考虑上一个的
-                for (TextView textView : textViews) {
-                    textView.setBackgroundResource(R.drawable.normal);
-                    textView.setTextColor(Color.parseColor(COLOR_NORMAL));
+                String str = sam.get(position);
+                // TODO: 2018/5/6 如果点击的时候同一个,不做处理
+                if (!TextUtils.isEmpty(str)) {
+                    if (str.equals(title)) {
+                        return;
+                    } else {
+                        sam.put(position, title);
+                    }
+                } else {
+                    List<String> list = sams.get(position);
+                    if (list != null && !list.contains(title)) {
+                        sam.clear();
+                    }
+                    sam.put(position, title);
                 }
-                sam.put(position, title);
 
+                // TODO: 2018/5/6 每一行的属性容器
                 for (int i = 0; i < mAttributes.size(); i++) {
-                    String title = sam.get(i);
-                    if (!TextUtils.isEmpty(title)) {
-                        for (int j = 0; j < mStockGoods.size(); j++) {
-                            GoodsPropertyBean.StockGoodsBean stockGoodsBean = mStockGoods.get(j);
-                            List<GoodsPropertyBean.StockGoodsBean.GoodsInfoBean> goodsInfo = stockGoodsBean.getGoodsInfo();
-                            List<String> titles = new ArrayList<>();
-                            for (int k = 0; k < goodsInfo.size(); k++) {
-                                if (i == k) {
-                                    GoodsPropertyBean.StockGoodsBean.GoodsInfoBean goodsInfoBean = goodsInfo.get(k);
-                                    String tabValue = goodsInfoBean.getTabValue();
-                                    titles.add(tabValue);
-                                }
+                    List<String> list = new ArrayList<>();
+                    sams.put(i, list);
+                }
+                // TODO: 2018/5/6 每一行有的属性
+                for (int i = 0; i < mStockGoods.size(); i++) {
+                    GoodsPropertyBean.StockGoodsBean stockGoodsBean = mStockGoods.get(i);
+                    List<GoodsPropertyBean.StockGoodsBean.GoodsInfoBean> goodsInfo = stockGoodsBean.getGoodsInfo();
+                    boolean flag = false;
+                    for (int j = 0; j < goodsInfo.size(); j++) {
+                        String title = sam.get(j);
+                        GoodsPropertyBean.StockGoodsBean.GoodsInfoBean goodsInfoBean = goodsInfo.get(j);
+                        String tabValue = goodsInfoBean.getTabValue();
+                        if (!TextUtils.isEmpty(title) && !title.equals(tabValue)) {
+                            break;
+                        }
+                        if (j == goodsInfo.size() - 1) {
+                            flag = true;
+                        }
+                    }
+                    if (flag) {
+                        for (int j = 0; j < goodsInfo.size(); j++) {
+                            String title = sam.get(j);
+                            List<String> list = sams.get(j);
+                            GoodsPropertyBean.StockGoodsBean.GoodsInfoBean goodsInfoBean = goodsInfo.get(j);
+                            String tabValue = goodsInfoBean.getTabValue();
+                            if (!TextUtils.isEmpty(title) && !title.equals(tabValue)) {
+                                break;
                             }
-                            TextView[] textView = mTextViews[position];
-                            for (int t = 0; t < textView.length; t++) {
-                                TextView tv = textView[t];
-                                String str = tv.getText().toString();
-                                if (titles.contains(str)) {
-                                    tv.setBackgroundResource(R.drawable.normal);
-                                    tv.setTextColor(Color.parseColor(COLOR_NORMAL));
-                                    tv.setEnabled(true);
-                                } else {
-                                    tv.setBackgroundResource(R.drawable.empty);
-                                    tv.setTextColor(Color.parseColor(COLOR_EMPTY));
-                                    tv.setEnabled(false);
-                                }
+                            if (!list.contains(tabValue)) {
+                                list.add(tabValue);
                             }
                         }
                     }
                 }
+                // TODO: 2018/5/6 根据商品的状态绘制
+                for (int i = 0; i < mTextViews.length; i++) {
+                    List<String> list = sams.get(i);
+                    // 之前选中的
+                    String select = sam.get(i);
+                    TextView[] textViews = mTextViews[i];
+                    for (TextView textView : textViews) {
+                        String title = textView.getText().toString();
+                        if (!TextUtils.isEmpty(select) && select.equals(title)) {
 
-                Log.d(TAG, "sam: " + sam.toString());
+                        } else if (list.contains(title)) {
+                            //                            textView.setEnabled(true);
+                            textView.setBackgroundResource(R.drawable.normal);
+                            textView.setTextColor(Color.parseColor(COLOR_NORMAL));
+                        } else {
+                            //                            textView.setEnabled(false);
+                            textView.setBackgroundResource(R.drawable.empty);
+                            textView.setTextColor(Color.parseColor(COLOR_EMPTY));
+                        }
+                    }
+                }
+
+                Log.d(TAG, "onClick: sam" + sam.toString());
+                Log.d(TAG, "onClick: sams" + sams.toString());
 
                 tv.setBackgroundResource(R.drawable.select);
                 tv.setTextColor(Color.parseColor(COLOR_SELECT));
