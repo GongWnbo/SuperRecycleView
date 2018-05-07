@@ -170,6 +170,32 @@
                     "tabValue": "大"
                 }
             ]
+        },
+        {
+            "goodsID": 6,
+            "goodsCount": 2;
+            "goodsInfo": [
+                {
+                    "tabID": 0,
+                    "tabName": "颜色",
+                    "tabValue": "白"
+                },
+                {
+                    "tabID": 1,
+                    "tabName": "型号",
+                    "tabValue": "X"
+                },
+                {
+                    "tabID": 2,
+                    "tabName": "衣服",
+                    "tabValue": "T恤"
+                },
+                {
+                    "tabID": 3,
+                    "tabName": "大小",
+                    "tabValue": "中"
+                }
+            ]
         }
     ]
 }</string>

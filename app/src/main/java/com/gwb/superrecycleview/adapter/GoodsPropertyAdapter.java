@@ -127,17 +127,8 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             for (int j = 0; j < goodsInfo.size(); j++) {
                 GoodsPropertyBean.StockGoodsBean.GoodsInfoBean goodsInfoBean = goodsInfo.get(j);
                 String tabValue = goodsInfoBean.getTabValue();
-                List<String> list = sams.get(j);
                 Set<Integer> keySet = sam.keySet();
                 Iterator<Integer> iterator = keySet.iterator();
-
-
-                // TODO: 2018/5/7 0007 只在选中的这行操作 
-//                if (position == j) {
-//                    if (!list.contains(tabValue)) {
-//                        list.add(tabValue);
-//                    }
-//                }
                 while (iterator.hasNext()) {
                     Integer key = iterator.next();
                     String arr = sam.get(key);
