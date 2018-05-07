@@ -24,8 +24,6 @@ public class SteamActivity extends AppCompatActivity {
 
     @BindView(R.id.fl)
     FlowLayout   mFl;
-    @BindView(R.id.rv_show)
-    RecyclerView mRvShow;
     private String[] arr = {"京东", "淘宝", "阿里巴巴", "dnf", "神舟七号", "外卖小哥", "马云？？？"};
 
     @Override
@@ -33,22 +31,11 @@ public class SteamActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_steam);
         ButterKnife.bind(this);
-        //        for (int i = 0; i < 20; i++) {
-        //            Random random = new Random();
-        //            TextView view = getView(arr[random.nextInt(arr.length)]);
-        //            mFl.addView(view);
-        //        }
-        init();
-    }
-
-    private void init() {
-        Gson gson = new Gson();
-        GoodsPropertyBean bean = gson.fromJson(getString(R.string.jsonData), GoodsPropertyBean.class);
-        List<GoodsPropertyBean.AttributesBean> attributes = bean.getAttributes();
-        List<GoodsPropertyBean.StockGoodsBean> stockGoods = bean.getStockGoods();
-        GoodsPropertyAdapter adapter = new GoodsPropertyAdapter(attributes, stockGoods, this, R.layout.item_goods);
-        mRvShow.setLayoutManager(new LinearLayoutManager(this));
-        mRvShow.setAdapter(adapter);
+        for (int i = 0; i < 20; i++) {
+            Random random = new Random();
+            TextView view = getView(arr[random.nextInt(arr.length)]);
+            mFl.addView(view);
+        }
     }
 
     public TextView getView(String msg) {

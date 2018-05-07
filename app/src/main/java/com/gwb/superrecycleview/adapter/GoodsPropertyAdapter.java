@@ -39,6 +39,7 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private TextView[][]                           mTextViews;
     private HashMap<Integer, String>              sam  = new HashMap<>();
     private SimpleArrayMap<Integer, List<String>> sams = new SimpleArrayMap<>();
+    private int index = 0;
 
     public GoodsPropertyAdapter(List<GoodsPropertyBean.AttributesBean> attributes, List<GoodsPropertyBean.StockGoodsBean> stockGoods, Context context, @LayoutRes int layoutId) {
         this.mAttributes = attributes;
@@ -73,8 +74,6 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         mTextViews[position] = textViews;
 
     }
-
-    private int index = 0;
 
     public TextView getTextView(final String title, final BaseViewHolder holder) {
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -122,37 +121,22 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                         String tabValue = goodsInfoBean.getTabValue();
                         List<String> list = sams.get(j);
                         Set<Integer> keySet = sam.keySet();
-                        if (keySet.size() > 1) {
-                            Iterator<Integer> iterator = keySet.iterator();
-                            while (iterator.hasNext()) {
-                                Integer key = iterator.next();
-                                String arr = sam.get(key);
-                                if (key == j) {
-                                    if (!list.contains(tabValue)) {
-                                        list.add(tabValue);
-                                    }
-                                    if (arr.equals(tabValue)) {
-                                        index++;
-                                    }
-                                }
-                            }
-                            if (index == keySet.size()) {
-                                flag = true;
-                            }
-                        } else {
-                            if (position == j) {
+                        Iterator<Integer> iterator = keySet.iterator();
+                        while (iterator.hasNext()) {
+                            Integer key = iterator.next();
+                            String arr = sam.get(key);
+                            // TODO: 2018/5/7 0007 如果是选中的行，看改行可选的，如果是没选中的，那就看附和所有条件的
+                            if (key == j) {
                                 if (!list.contains(tabValue)) {
                                     list.add(tabValue);
                                 }
-                            }
-                            Iterator<Integer> iterator = keySet.iterator();
-                            while (iterator.hasNext()) {
-                                Integer key = iterator.next();
-                                String arr = sam.get(key);
                                 if (arr.equals(tabValue)) {
-                                    flag = true;
+                                    index++;
                                 }
                             }
+                        }
+                        if (index == keySet.size()) {
+                            flag = true;
                         }
                     }
                     index = 0;
@@ -166,20 +150,6 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                         }
                         flag = false;
                     }
-                    //                    if (flag) {
-                    //                        for (int j = 0; j < goodsInfo.size(); j++) {
-                    //                            String title = sam.get(j);
-                    //                            List<String> list = sams.get(j);
-                    //                            GoodsPropertyBean.StockGoodsBean.GoodsInfoBean goodsInfoBean = goodsInfo.get(j);
-                    //                            String tabValue = goodsInfoBean.getTabValue();
-                    //                            if (!TextUtils.isEmpty(title) && !title.equals(tabValue)) {
-                    //                                break;
-                    //                            }
-                    //                            if (!list.contains(tabValue)) {
-                    //                                list.add(tabValue);
-                    //                            }
-                    //                        }
-                    //                    }
                 }
                 // TODO: 2018/5/6 根据商品的状态绘制
                 for (int i = 0; i < mTextViews.length; i++) {
