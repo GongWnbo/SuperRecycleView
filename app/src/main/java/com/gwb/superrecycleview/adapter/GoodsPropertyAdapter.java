@@ -31,7 +31,6 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private final        String COLOR_SELECT = "#ffffff";
     private final        String COLOR_EMPTY  = "#BBBBBB";
     private final        String COLOR_NORMAL = "#6D6D6D";
-
     private List<GoodsPropertyBean.AttributesBean> mAttributes;
     private List<GoodsPropertyBean.StockGoodsBean> mStockGoods;
     private Context                                mContext;
@@ -106,8 +105,6 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 Log.d(TAG, "onClick: sam" + sam.toString());
                 Log.d(TAG, "onClick: sams" + sams.toString());
 
-                tv.setBackgroundResource(R.drawable.select);
-                tv.setTextColor(Color.parseColor(COLOR_SELECT));
                 // 回调
                 if (mGoodsSelectListener != null) {
                     mGoodsSelectListener.select(sam);
@@ -133,12 +130,14 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 List<String> list = sams.get(j);
                 Set<Integer> keySet = sam.keySet();
                 Iterator<Integer> iterator = keySet.iterator();
+
+
                 // TODO: 2018/5/7 0007 只在选中的这行操作 
-                if (position == j) {
-                    if (!list.contains(tabValue)) {
-                        list.add(tabValue);
-                    }
-                }
+//                if (position == j) {
+//                    if (!list.contains(tabValue)) {
+//                        list.add(tabValue);
+//                    }
+//                }
                 while (iterator.hasNext()) {
                     Integer key = iterator.next();
                     String arr = sam.get(key);
@@ -179,7 +178,8 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 String title = textView.getText().toString();
                 // 如果是之前选中的，不做处理
                 if (!TextUtils.isEmpty(select) && select.equals(title)) {
-
+                    textView.setBackgroundResource(R.drawable.select);
+                    textView.setTextColor(Color.parseColor(COLOR_SELECT));
                 } else if (list.contains(title)) {
                     // 如果是可选的
                     textView.setEnabled(true);
@@ -200,7 +200,7 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         String str = sam.get(position);
         if (!TextUtils.isEmpty(str)) {
             if (str.equals(title)) {
-                return;
+                sam.remove(position);
             } else {
                 // TODO: 2018/5/7 0007 如果点击的是同一行已有的，先清空掉
                 sam.clear();
