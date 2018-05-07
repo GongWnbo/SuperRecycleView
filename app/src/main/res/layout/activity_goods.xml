@@ -15,6 +15,14 @@
         android:text="商品属性"
         android:textSize="12sp"/>
 
+    <TextView
+        android:id="@+id/tv_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="商品数目"
+        android:textSize="12sp"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_show"
         android:layout_width="match_parent"

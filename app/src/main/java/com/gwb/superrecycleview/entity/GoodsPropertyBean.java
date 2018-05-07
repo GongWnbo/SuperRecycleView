@@ -29,12 +29,12 @@ public class GoodsPropertyBean {
 
     public static class AttributesBean {
         /**
-         * attributesItem : ["白","蓝","黑"]
          * tabID : 0
          * tabName : 颜色
+         * attributesItem : ["白","蓝","黑"]
          */
 
-        private int          tabID;
+        private int tabID;
         private String       tabName;
         private List<String> attributesItem;
 
@@ -66,10 +66,12 @@ public class GoodsPropertyBean {
     public static class StockGoodsBean {
         /**
          * goodsID : 1
+         * goodsCount : 4
          * goodsInfo : [{"tabID":0,"tabName":"颜色","tabValue":"白"},{"tabID":1,"tabName":"型号","tabValue":"X"},{"tabID":2,"tabName":"衣服","tabValue":"羽绒服"},{"tabID":3,"tabName":"大小","tabValue":"中"}]
          */
 
-        private int                 goodsID;
+        private int goodsID;
+        private int                 goodsCount;
         private List<GoodsInfoBean> goodsInfo;
 
         public int getGoodsID() {
@@ -78,6 +80,14 @@ public class GoodsPropertyBean {
 
         public void setGoodsID(int goodsID) {
             this.goodsID = goodsID;
+        }
+
+        public int getGoodsCount() {
+            return goodsCount;
+        }
+
+        public void setGoodsCount(int goodsCount) {
+            this.goodsCount = goodsCount;
         }
 
         public List<GoodsInfoBean> getGoodsInfo() {
@@ -95,14 +105,9 @@ public class GoodsPropertyBean {
              * tabValue : 白
              */
 
-            private int    tabID;
+            private int tabID;
             private String tabName;
             private String tabValue;
-
-            @Override
-            public String toString() {
-                return "tabValue=" + tabValue;
-            }
 
             public int getTabID() {
                 return tabID;

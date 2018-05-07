@@ -43,6 +43,7 @@
     "stockGoods": [
         {
             "goodsID": 1,
+            "goodsCount": 4;
             "goodsInfo": [
                 {
                     "tabID": 0,
@@ -68,6 +69,7 @@
         },
         {
             "goodsID": 2,
+            "goodsCount": 3;
             "goodsInfo": [
                 {
                     "tabID": 0,
@@ -93,6 +95,7 @@
         },
         {
             "goodsID": 3,
+            "goodsCount": 2;
             "goodsInfo": [
                 {
                     "tabID": 0,
@@ -118,6 +121,7 @@
         },
         {
             "goodsID": 4,
+            "goodsCount": 1;
             "goodsInfo": [
                 {
                     "tabID": 0,
@@ -143,6 +147,7 @@
         },
         {
             "goodsID": 5,
+            "goodsCount": 0;
             "goodsInfo": [
                 {
                     "tabID": 0,

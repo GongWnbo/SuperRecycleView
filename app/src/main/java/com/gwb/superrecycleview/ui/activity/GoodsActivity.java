@@ -14,6 +14,7 @@ import com.gwb.superrecycleview.adapter.GoodsPropertyAdapter;
 import com.gwb.superrecycleview.entity.GoodsPropertyBean;
 import com.gwb.superrecycleview.utils.ToastUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,8 +29,12 @@ public class GoodsActivity extends AppCompatActivity implements GoodsPropertyAda
     @BindView(R.id.tv_goods)
     TextView     mTvGoods;
     StringBuilder sb = new StringBuilder();
+    @BindView(R.id.tv_count)
+    TextView mTvCount;
     private List<GoodsPropertyBean.AttributesBean> mAttributes;
-    private String remind = "未选择";
+    private String       remind = "未选择";
+    private List<String> mList  = new ArrayList<>();
+    private List<GoodsPropertyBean.StockGoodsBean> mStockGoods;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +48,8 @@ public class GoodsActivity extends AppCompatActivity implements GoodsPropertyAda
         Gson gson = new Gson();
         GoodsPropertyBean bean = gson.fromJson(getString(R.string.jsonData), GoodsPropertyBean.class);
         mAttributes = bean.getAttributes();
-        List<GoodsPropertyBean.StockGoodsBean> stockGoods = bean.getStockGoods();
-        GoodsPropertyAdapter adapter = new GoodsPropertyAdapter(mAttributes, stockGoods, this, R.layout.item_goods);
+        mStockGoods = bean.getStockGoods();
+        GoodsPropertyAdapter adapter = new GoodsPropertyAdapter(mAttributes, mStockGoods, this, R.layout.item_goods);
         mRvShow.setLayoutManager(new LinearLayoutManager(this));
         mRvShow.setAdapter(adapter);
         adapter.setGoodsSelectListener(this);
@@ -59,6 +64,7 @@ public class GoodsActivity extends AppCompatActivity implements GoodsPropertyAda
 
     @Override
     public void select(HashMap<Integer, String> sam) {
+        mList.clear();
         sb.setLength(0);
         sb.append("商品属性");
         for (int i = 0; i < mAttributes.size(); i++) {
@@ -67,11 +73,36 @@ public class GoodsActivity extends AppCompatActivity implements GoodsPropertyAda
             String title = sam.get(i);
             if (TextUtils.isEmpty(title)) {
                 title = remind;
+            } else {
+                mList.add(title);
             }
             sb.append(" ").append(tabName).append(" : ").append(title);
         }
         mTvGoods.setText(sb.toString());
         Log.d(TAG, "select: " + sam.toString());
+        // TODO: 2018/5/7 0007 如果都选择了
+        if (!sb.toString().contains(remind)) {
+            int goodsID = -1;
+            int count = -1;
+            for (GoodsPropertyBean.StockGoodsBean stockGood : mStockGoods) {
+                List<GoodsPropertyBean.StockGoodsBean.GoodsInfoBean> goodsInfo = stockGood.getGoodsInfo();
+                boolean flag = false;
+                for (int i = 0; i < goodsInfo.size(); i++) {
+                    GoodsPropertyBean.StockGoodsBean.GoodsInfoBean goodsInfoBean = goodsInfo.get(i);
+                    if (!mList.contains(goodsInfoBean.getTabValue())) {
+                        break;
+                    }
+                    if (i == goodsInfo.size() - 1) {
+                        flag = true;
+                    }
+                    if (flag) {
+                        goodsID = stockGood.getGoodsID();
+                        count = stockGood.getGoodsCount();
+                    }
+                }
+            }
+            mTvCount.setText("商品数量:" + count + "\t商品id" + goodsID);
+        }
     }
 
     @OnClick(R.id.btn_order)
@@ -79,9 +110,8 @@ public class GoodsActivity extends AppCompatActivity implements GoodsPropertyAda
         String title = mTvGoods.getText().toString();
         if (title.contains(remind)) {
             ToastUtil.showToast(this, "请选择商品");
-        } else {
+        } else
             ToastUtil.showToast(this, "下单成功");
-        }
     }
 
 }
