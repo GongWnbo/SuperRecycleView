@@ -37,9 +37,10 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private Context                                mContext;
     private int                                    layoutId;
     private TextView[][]                           mTextViews;
-    private HashMap<Integer, String>              sam  = new HashMap<>();
-    private SimpleArrayMap<Integer, List<String>> sams = new SimpleArrayMap<>();
-    private int index = 0;
+    private HashMap<Integer, String>              sam   = new HashMap<>();
+    private SimpleArrayMap<Integer, List<String>> sams  = new SimpleArrayMap<>();
+    private int                                   index = 0;
+    private GoodsSelectListener mGoodsSelectListener;
 
     public GoodsPropertyAdapter(List<GoodsPropertyBean.AttributesBean> attributes, List<GoodsPropertyBean.StockGoodsBean> stockGoods, Context context, @LayoutRes int layoutId) {
         this.mAttributes = attributes;
@@ -48,6 +49,10 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         this.layoutId = layoutId;
         int size = attributes.size();
         mTextViews = new TextView[size][0];
+    }
+
+    public void setGoodsSelectListener(GoodsSelectListener goodsSelectListener) {
+        mGoodsSelectListener = goodsSelectListener;
     }
 
     @Override
@@ -178,6 +183,10 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
                 tv.setBackgroundResource(R.drawable.select);
                 tv.setTextColor(Color.parseColor(COLOR_SELECT));
+
+                if (mGoodsSelectListener != null) {
+                    mGoodsSelectListener.select(sam);
+                }
             }
         });
         return tv;
@@ -186,6 +195,12 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     @Override
     public int getItemCount() {
         return mAttributes == null ? 0 : mAttributes.size();
+    }
+
+    public interface GoodsSelectListener {
+
+        void select(HashMap<Integer, String> sam);
+
     }
 
 }

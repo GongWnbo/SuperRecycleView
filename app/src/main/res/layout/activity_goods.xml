@@ -8,9 +8,22 @@
     android:orientation="vertical"
     tools:context="com.gwb.superrecycleview.ui.activity.GoodsActivity">
 
+    <TextView
+        android:id="@+id/tv_goods"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="商品属性"
+        android:textSize="12sp"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_show"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"/>
 
+    <Button
+        android:id="@+id/btn_order"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="下单"/>
 </LinearLayout>
