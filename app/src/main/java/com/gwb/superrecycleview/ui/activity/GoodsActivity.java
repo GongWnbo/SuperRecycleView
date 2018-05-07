@@ -102,6 +102,8 @@ public class GoodsActivity extends AppCompatActivity implements GoodsPropertyAda
                 }
             }
             mTvCount.setText("商品数量:" + count + "\t商品id" + goodsID);
+        }else {
+            mTvCount.setText("商品数量");
         }
     }
 
