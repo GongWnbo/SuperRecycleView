@@ -99,7 +99,7 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 // TODO: 2018/5/7 0007 每一行选中的属性
                 put(position, title);
                 // TODO: 2018/5/6 每一行有的属性
-                addProperty();
+                addProperty(position);
                 // TODO: 2018/5/6 根据商品的状态绘制
                 initStatus();
 
@@ -117,7 +117,7 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         return tv;
     }
 
-    private void addProperty() {
+    private void addProperty(int position) {
         // TODO: 2018/5/6 每一行的属性容器
         for (int i = 0; i < mAttributes.size(); i++) {
             List<String> list = new ArrayList<>();
@@ -133,14 +133,17 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 List<String> list = sams.get(j);
                 Set<Integer> keySet = sam.keySet();
                 Iterator<Integer> iterator = keySet.iterator();
+                // TODO: 2018/5/7 0007 只在选中的这行操作 
+                if (position == j) {
+                    if (!list.contains(tabValue)) {
+                        list.add(tabValue);
+                    }
+                }
                 while (iterator.hasNext()) {
                     Integer key = iterator.next();
                     String arr = sam.get(key);
                     // TODO: 2018/5/7 0007 如果是选中的行，改行可选的，如果是没选中的，那就看附和所有条件的
                     if (key == j) {
-                        if (!list.contains(tabValue)) {
-                            list.add(tabValue);
-                        }
                         if (arr.equals(tabValue)) {
                             index++;
                         }
@@ -179,12 +182,12 @@ public class GoodsPropertyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
                 } else if (list.contains(title)) {
                     // 如果是可选的
-                    //                            textView.setEnabled(true);
+                    textView.setEnabled(true);
                     textView.setBackgroundResource(R.drawable.normal);
                     textView.setTextColor(Color.parseColor(COLOR_NORMAL));
                 } else {
                     // 如果是不可选的
-                    //                            textView.setEnabled(false);
+                    textView.setEnabled(false);
                     textView.setBackgroundResource(R.drawable.empty);
                     textView.setTextColor(Color.parseColor(COLOR_EMPTY));
                 }
