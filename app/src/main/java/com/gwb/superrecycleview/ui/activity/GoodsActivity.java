@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +18,9 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.GoodsPropertyAdapter;
@@ -57,11 +62,21 @@ public class GoodsActivity extends AppCompatActivity implements GoodsPropertyAda
     }
 
     private void watermark() {
-        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_launcher);
-        BitmapDrawable bd = (BitmapDrawable) drawable;
-        Bitmap bmp = bd.getBitmap();
-        Bitmap bitmap = createWatermark(bmp, "叶应是叶" + "http://blog.csdn.net/new_one_object");
-        mIv.setImageBitmap(bitmap);
+        // TODO: 2018/5/10 0010
+        String pic = "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=161888459,1712714238&fm=27&gp=0.jpg";
+        Glide.with(this).asBitmap().load(pic).into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                Bitmap bitmap = createWatermark(resource, "叶应是叶" + "http://blog.csdn.net/new_one_object");
+                mIv.setImageBitmap(bitmap);
+            }
+        });
+
+//        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_launcher);
+//        BitmapDrawable bd = (BitmapDrawable) drawable;
+//        Bitmap bmp = bd.getBitmap();
+//        Bitmap bitmap = createWatermark(bmp, "叶应是叶" + "http://blog.csdn.net/new_one_object");
+//        mIv.setImageBitmap(bitmap);
     }
 
     private Bitmap createWatermark(Bitmap bitmap, String mark) {
@@ -71,7 +86,7 @@ public class GoodsActivity extends AppCompatActivity implements GoodsPropertyAda
         Canvas canvas = new Canvas(bmp);
         Paint p = new Paint();
         // 水印颜色
-        p.setColor(Color.RED);
+        p.setColor(Color.YELLOW);
         // 水印字体大小
         p.setTextSize(20);
         //抗锯齿
