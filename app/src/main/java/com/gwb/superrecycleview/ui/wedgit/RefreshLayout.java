@@ -3,8 +3,11 @@ package com.gwb.superrecycleview.ui.wedgit;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+
+import com.gwb.superrecycleview.R;
 
 /**
  * 刷新的布局，针对RecycleView
@@ -12,8 +15,11 @@ import android.widget.TextView;
  */
 public class RefreshLayout extends LinearLayout {
 
+    //<editor-fold desc="常量 displacement">
     private Context mContext;
+    //</editor-fold>
 
+    //<editor-fold desc="构造方法 displacement">
     public RefreshLayout(Context context) {
         this(context, null);
     }
@@ -28,16 +34,16 @@ public class RefreshLayout extends LinearLayout {
         setOrientation(VERTICAL);
         mContext = context;
     }
+    //</editor-fold>
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        TextView headerView = new TextView(mContext);
-        headerView.setText("header");
+        View headerView = LayoutInflater.from(mContext).inflate(R.layout.refresh_header, this, false);
         addView(headerView, 0);
 
-        TextView footerView = new TextView(mContext);
-        footerView.setText("footer");
+        View footerView = LayoutInflater.from(mContext).inflate(R.layout.refresh_footer, this, false);
         addView(footerView, getChildCount());
     }
+
 }
