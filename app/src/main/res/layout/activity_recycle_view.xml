@@ -14,6 +14,12 @@
         android:layout_height="match_parent"
         tools:context=".ui.activity.RecycleViewActivity">
 
+        <!--<View-->
+            <!--android:layout_margin="10dp"-->
+            <!--android:background="@color/colorAccent"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="30dp"/>-->
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv"
             android:layout_width="match_parent"
