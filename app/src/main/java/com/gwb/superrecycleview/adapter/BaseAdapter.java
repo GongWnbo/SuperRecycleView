@@ -1,6 +1,5 @@
 package com.gwb.superrecycleview.adapter;
 
-import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,21 +15,19 @@ import java.util.List;
 public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> implements View.OnClickListener {
 
     private List<T>                mDatas;
-    private Context                mContext;
     private int                    layoutId;
     private BaseAdapterListener    mBaseAdapterListener;
     private OnItemClickListener<T> mOnItemClickListener;
 
-    public BaseAdapter(List<T> datas, Context context, @LayoutRes int layoutId, BaseAdapterListener baseAdapterListener) {
+    public BaseAdapter(List<T> datas, @LayoutRes int layoutId, BaseAdapterListener baseAdapterListener) {
         this.mDatas = datas;
-        this.mContext = context;
         this.layoutId = layoutId;
         this.mBaseAdapterListener = baseAdapterListener;
     }
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(layoutId, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
         view.setOnClickListener(this);
         return new BaseViewHolder(parent.getContext(), view);
     }
@@ -55,7 +52,8 @@ public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> impleme
     @Override
     public void onClick(View v) {
         if (mOnItemClickListener != null) {
-            mOnItemClickListener.onItemClick((Integer) v.getTag());
+            Integer tag = (Integer) v.getTag();
+            mOnItemClickListener.onItemClick(tag,mDatas.get(tag));
         }
     }
 
