@@ -1,7 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="142dp">
 
-</android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:id="@+id/iv_goods"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"
+        android:src="@mipmap/ic_launcher"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="15dp"
+        android:background="#F5F5F5"/>
+
+    <TextView
+        android:id="@+id/tv_goods_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="16dp"
+        android:layout_toRightOf="@id/iv_goods"
+        android:text="小猪包套餐"
+        android:textColor="#333333"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/tv_goods_title"
+        android:id="@+id/tv——"
+        android:text="小猪包1个+豆浆1个+鲜肉包1个"
+        android:textColor="#BCBCBC"
+        android:textSize="12sp"/>
+
+
+</RelativeLayout>

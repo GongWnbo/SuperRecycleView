@@ -2,6 +2,7 @@ package com.gwb.superrecycleview.ui.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.gwb.superrecycleview.R;
@@ -37,6 +38,7 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
 
     private void initView() {
         BaseAdapter adapter = new BaseAdapter(mGoodsList, R.layout.item_shop_goods, this);
+        mRvGoods.setLayoutManager(new LinearLayoutManager(this));
         mRvGoods.setAdapter(adapter);
     }
 
