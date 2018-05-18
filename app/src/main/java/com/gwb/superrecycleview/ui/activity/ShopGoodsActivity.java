@@ -97,11 +97,13 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
                 if (count == 0) {
                     animClose(iv_goods_reduce);
                     tv_goods_count.setText("");
+                    // 考虑到用户点击过快
                     goodsCount--;
                 } else if (count < 0) {
                     // TODO: 2018/5/18 0018 如果用户点击过快
                     count = 0;
                 } else {
+                    // 考虑到用户点击过快
                     goodsCount--;
                     tv_goods_count.setText(String.valueOf(count));
                 }
