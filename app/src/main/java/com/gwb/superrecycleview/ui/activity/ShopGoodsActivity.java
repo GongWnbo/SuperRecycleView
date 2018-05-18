@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 
 import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.BaseAdapter;
 import com.gwb.superrecycleview.adapter.BaseViewHolder;
+import com.gwb.superrecycleview.utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +46,8 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
 
     @Override
     public void convert(BaseViewHolder holder, String str) {
-
+        // 原价
+        TextView tv_goods_original_price = holder.getView(R.id.tv_goods_original_price);
+        Util.drawStrikethrough(tv_goods_original_price);
     }
 }
