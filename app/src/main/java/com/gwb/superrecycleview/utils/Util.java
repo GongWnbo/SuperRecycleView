@@ -1,5 +1,6 @@
 package com.gwb.superrecycleview.utils;
 
+import android.content.Context;
 import android.graphics.Paint;
 import android.widget.TextView;
 
@@ -16,6 +17,12 @@ public class Util {
     // 中划线
     public static void drawStrikethrough(TextView textView) {
         textView.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+    }
+
+    // dp2px
+    public static int dp2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
     }
 
 }
