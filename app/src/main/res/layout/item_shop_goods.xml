@@ -113,6 +113,17 @@
         android:textColor="#BCBCBC"
         android:textSize="14sp"/>
 
+    <!--放在加的图标前面-->
+    <ImageView
+        android:id="@+id/iv_goods_reduce"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignTop="@id/iv_goods_add"
+        android:layout_marginLeft="37dp"
+        android:layout_toLeftOf="@id/tv_goods_count"
+        android:src="@mipmap/icon_goods_reduce"
+        android:visibility="invisible"/>
+
     <ImageView
         android:id="@+id/iv_goods_add"
         android:layout_width="24dp"
@@ -129,16 +140,6 @@
         android:layout_alignTop="@id/iv_goods_add"
         android:layout_toLeftOf="@id/iv_goods_add"
         android:gravity="center"
-        android:text="1"
         android:textColor="#333333"
         android:textSize="14sp"/>
-
-    <ImageView
-        android:id="@+id/tv_goods_reduce"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_alignTop="@id/iv_goods_add"
-        android:layout_marginLeft="37dp"
-        android:layout_toLeftOf="@id/tv_goods_count"
-        android:src="@mipmap/icon_goods_reduce"/>
 </RelativeLayout>
