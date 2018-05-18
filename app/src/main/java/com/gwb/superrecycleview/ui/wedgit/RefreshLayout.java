@@ -106,6 +106,13 @@ public class RefreshLayout extends LinearLayout {
                 childView.setLayoutParams(lp);
             }
         }
+
+        for (int i = 0; i < getChildCount(); i++) {
+            View childAt = getChildAt(i);
+            if (childAt instanceof RecyclerView){
+                RecyclerView recyclerView = (RecyclerView) childAt;
+            }
+        }
     }
 
     //<editor-fold desc="滑动判断 judgement of slide">

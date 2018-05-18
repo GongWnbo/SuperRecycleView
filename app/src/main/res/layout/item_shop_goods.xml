@@ -122,7 +122,7 @@
         android:layout_marginLeft="37dp"
         android:layout_toLeftOf="@id/tv_goods_count"
         android:src="@mipmap/icon_goods_reduce"
-        android:visibility="invisible"/>
+        android:visibility="visible"/>
 
     <ImageView
         android:id="@+id/iv_goods_add"

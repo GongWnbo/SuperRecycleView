@@ -1,6 +1,8 @@
 package com.gwb.superrecycleview.ui.activity;
 
 import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.graphics.Path;
@@ -12,6 +14,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,6 +27,7 @@ import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.BaseAdapter;
 import com.gwb.superrecycleview.adapter.BaseViewHolder;
 import com.gwb.superrecycleview.entity.ShopGoodsBean;
+import com.gwb.superrecycleview.imp.AnimationAdapter;
 import com.gwb.superrecycleview.utils.ToastUtil;
 import com.gwb.superrecycleview.utils.Util;
 
@@ -154,24 +162,69 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
         int count = bean.getCount();
         tv_goods_count.setText(count == 0 ? "" : String.valueOf(count));
         iv_goods_reduce.setVisibility(count == 0 ? View.INVISIBLE : View.VISIBLE);
+        // 标题
+        holder.setTitle(R.id.tv_goods_title, "小猪包套餐" + holder.getLayoutPosition() + "\t" + count);
+        System.out.println("position" + holder.getLayoutPosition() + "count=" + count + "是否可见：" + iv_goods_reduce.getVisibility());
     }
 
-    public void animOpen(ImageView imageView) {
-        ObjectAnimator oa = ObjectAnimator.ofFloat(imageView, "translationX", addLeft - reduceLeft, 0);
-        oa.setDuration(300);
-        oa.start();
-        ObjectAnimator oa1 = ObjectAnimator.ofFloat(imageView, "rotation", 0, 180);
-        oa1.setDuration(300);
-        oa1.start();
+    public void animOpen(final ImageView imageView) {
+        TranslateAnimation translateAnimation = new TranslateAnimation(addLeft - reduceLeft, 0, 0, 0);
+//        translateAnimation.setDuration(300);
+//        imageView.startAnimation(translateAnimation);
+        RotateAnimation rotateAnimation = new RotateAnimation(0, 180, RotateAnimation.RELATIVE_TO_SELF, 0, 0, RotateAnimation.RELATIVE_TO_SELF);
+//        rotateAnimation.setDuration(300);
+//        imageView.startAnimation(rotateAnimation);
+
+        AnimationSet animationSet = new AnimationSet(true);
+        animationSet.addAnimation(translateAnimation);
+        animationSet.addAnimation(rotateAnimation);
+        animationSet.setDuration(300);
+        imageView.startAnimation(animationSet);
+        animationSet.setAnimationListener(new AnimationAdapter() {
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                imageView.setVisibility(View.VISIBLE);
+            }
+        });
+
+
+        //        ObjectAnimator oa = ObjectAnimator.ofFloat(imageView, "translationX", addLeft - reduceLeft, 0);
+        //        oa.setDuration(300);
+        //        oa.start();
+        //        ObjectAnimator oa1 = ObjectAnimator.ofFloat(imageView, "rotation", 0, 180);
+        //        oa1.setDuration(300);
+        //        oa1.start();
     }
 
-    public void animClose(ImageView imageView) {
-        ObjectAnimator oa = ObjectAnimator.ofFloat(imageView, "translationX", 0, addLeft - reduceLeft);
-        oa.setDuration(300);
-        oa.start();
-        ObjectAnimator oa1 = ObjectAnimator.ofFloat(imageView, "rotation", 0, 180);
-        oa1.setDuration(300);
-        oa1.start();
+    public void animClose(final ImageView imageView) {
+        TranslateAnimation translateAnimation = new TranslateAnimation(0, addLeft - reduceLeft, 0, 0);
+//        translateAnimation.setDuration(300);
+//        imageView.startAnimation(translateAnimation);
+        RotateAnimation rotateAnimation = new RotateAnimation(0, 180, RotateAnimation.RELATIVE_TO_SELF, 0, 0, RotateAnimation.RELATIVE_TO_SELF);
+//        rotateAnimation.setDuration(300);
+//        imageView.startAnimation(rotateAnimation);
+
+        AnimationSet animationSet = new AnimationSet(true);
+        animationSet.addAnimation(translateAnimation);
+        animationSet.addAnimation(rotateAnimation);
+        animationSet.setDuration(300);
+        imageView.startAnimation(animationSet);
+        animationSet.setAnimationListener(new AnimationAdapter() {
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                imageView.setVisibility(View.GONE);
+            }
+        });
+
+
+        //        ObjectAnimator oa = ObjectAnimator.ofFloat(imageView, "translationX", 0, addLeft - reduceLeft);
+        //        oa.setDuration(300);
+        //        oa.start();
+        //        ObjectAnimator oa1 = ObjectAnimator.ofFloat(imageView, "rotation", 0, 180);
+        //        oa1.setDuration(300);
+        //        oa1.start();
     }
 
     public void addGoods2CartAnim(ImageView goodsImageView) {
