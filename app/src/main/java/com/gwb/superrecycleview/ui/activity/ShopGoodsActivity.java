@@ -1,8 +1,7 @@
 package com.gwb.superrecycleview.ui.activity;
 
 import android.animation.Animator;
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.graphics.Path;
@@ -14,11 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
-import android.view.animation.RotateAnimation;
-import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,14 +21,11 @@ import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.BaseAdapter;
 import com.gwb.superrecycleview.adapter.BaseViewHolder;
 import com.gwb.superrecycleview.entity.ShopGoodsBean;
-import com.gwb.superrecycleview.imp.AnimationAdapter;
 import com.gwb.superrecycleview.utils.ToastUtil;
 import com.gwb.superrecycleview.utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.crypto.Cipher;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -164,67 +155,35 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
         iv_goods_reduce.setVisibility(count == 0 ? View.INVISIBLE : View.VISIBLE);
         // 标题
         holder.setTitle(R.id.tv_goods_title, "小猪包套餐" + holder.getLayoutPosition() + "\t" + count);
-        System.out.println("position" + holder.getLayoutPosition() + "count=" + count + "是否可见：" + iv_goods_reduce.getVisibility());
+        System.out.println("position" + holder.getLayoutPosition() + ",reduce=" + iv_goods_reduce.getLeft() + ",add=" + iv_goods_add.getLeft());
     }
 
     public void animOpen(final ImageView imageView) {
-        TranslateAnimation translateAnimation = new TranslateAnimation(addLeft - reduceLeft, 0, 0, 0);
-//        translateAnimation.setDuration(300);
-//        imageView.startAnimation(translateAnimation);
-        RotateAnimation rotateAnimation = new RotateAnimation(0, 180, RotateAnimation.RELATIVE_TO_SELF, 0, 0, RotateAnimation.RELATIVE_TO_SELF);
-//        rotateAnimation.setDuration(300);
-//        imageView.startAnimation(rotateAnimation);
-
-        AnimationSet animationSet = new AnimationSet(true);
-        animationSet.addAnimation(translateAnimation);
-        animationSet.addAnimation(rotateAnimation);
-        animationSet.setDuration(300);
-        imageView.startAnimation(animationSet);
-        animationSet.setAnimationListener(new AnimationAdapter() {
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                imageView.setVisibility(View.VISIBLE);
-            }
-        });
-
-
-        //        ObjectAnimator oa = ObjectAnimator.ofFloat(imageView, "translationX", addLeft - reduceLeft, 0);
-        //        oa.setDuration(300);
-        //        oa.start();
-        //        ObjectAnimator oa1 = ObjectAnimator.ofFloat(imageView, "rotation", 0, 180);
-        //        oa1.setDuration(300);
-        //        oa1.start();
+        ObjectAnimator oa = ObjectAnimator.ofFloat(imageView, "translationX", addLeft - reduceLeft, 0);
+        oa.setDuration(300);
+        oa.start();
+        ObjectAnimator oa1 = ObjectAnimator.ofFloat(imageView, "rotation", 0, 180);
+        oa1.setDuration(300);
+        oa1.start();
     }
 
     public void animClose(final ImageView imageView) {
-        TranslateAnimation translateAnimation = new TranslateAnimation(0, addLeft - reduceLeft, 0, 0);
-//        translateAnimation.setDuration(300);
-//        imageView.startAnimation(translateAnimation);
-        RotateAnimation rotateAnimation = new RotateAnimation(0, 180, RotateAnimation.RELATIVE_TO_SELF, 0, 0, RotateAnimation.RELATIVE_TO_SELF);
-//        rotateAnimation.setDuration(300);
-//        imageView.startAnimation(rotateAnimation);
-
-        AnimationSet animationSet = new AnimationSet(true);
-        animationSet.addAnimation(translateAnimation);
-        animationSet.addAnimation(rotateAnimation);
-        animationSet.setDuration(300);
-        imageView.startAnimation(animationSet);
-        animationSet.setAnimationListener(new AnimationAdapter() {
-
+        ObjectAnimator oa = ObjectAnimator.ofFloat(imageView, "translationX", 0, addLeft - reduceLeft);
+        oa.setDuration(300);
+        oa.start();
+        ObjectAnimator oa1 = ObjectAnimator.ofFloat(imageView, "rotation", 0, 180);
+        oa1.setDuration(300);
+        oa1.start();
+        oa.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onAnimationEnd(Animation animation) {
+            public void onAnimationEnd(Animator animation) {
+                // TODO: 2018/5/19 因为属性动画会改变位置,所以当结束的时候,要回退的到原来的位置,同时用补间动画的位移不好控制
+                ObjectAnimator oa = ObjectAnimator.ofFloat(imageView, "translationX", addLeft - reduceLeft, 0);
+                oa.setDuration(0);
+                oa.start();
                 imageView.setVisibility(View.GONE);
             }
         });
-
-
-        //        ObjectAnimator oa = ObjectAnimator.ofFloat(imageView, "translationX", 0, addLeft - reduceLeft);
-        //        oa.setDuration(300);
-        //        oa.start();
-        //        ObjectAnimator oa1 = ObjectAnimator.ofFloat(imageView, "rotation", 0, 180);
-        //        oa1.setDuration(300);
-        //        oa1.start();
     }
 
     public void addGoods2CartAnim(ImageView goodsImageView) {
@@ -279,28 +238,13 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
                 goods.setTranslationY(mCurrentPosition[1]);
             }
         });
-        valueAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
+        valueAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 // 移除图片
                 mFl.removeView(goods);
                 // 购物车数量增加
                 mTvShoppingCartCount.setText(String.valueOf(goodsCount));
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
             }
         });
     }
