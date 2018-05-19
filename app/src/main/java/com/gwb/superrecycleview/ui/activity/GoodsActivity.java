@@ -1,13 +1,26 @@
 package com.gwb.superrecycleview.ui.activity;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.GoodsPropertyAdapter;
@@ -30,7 +43,9 @@ public class GoodsActivity extends AppCompatActivity implements GoodsPropertyAda
     TextView     mTvGoods;
     StringBuilder sb = new StringBuilder();
     @BindView(R.id.tv_count)
-    TextView mTvCount;
+    TextView  mTvCount;
+    @BindView(R.id.iv)
+    ImageView mIv;
     private List<GoodsPropertyBean.AttributesBean> mAttributes;
     private String       remind = "未选择";
     private List<String> mList  = new ArrayList<>();
@@ -42,6 +57,47 @@ public class GoodsActivity extends AppCompatActivity implements GoodsPropertyAda
         setContentView(R.layout.activity_goods);
         ButterKnife.bind(this);
         init();
+        // 水印
+        watermark();
+    }
+
+    private void watermark() {
+        // TODO: 2018/5/10 0010
+        String pic = "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=161888459,1712714238&fm=27&gp=0.jpg";
+        Glide.with(this).asBitmap().load(pic).into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                Bitmap bitmap = createWatermark(resource, "叶应是叶" + "http://blog.csdn.net/new_one_object");
+                mIv.setImageBitmap(bitmap);
+            }
+        });
+
+//        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_launcher);
+//        BitmapDrawable bd = (BitmapDrawable) drawable;
+//        Bitmap bmp = bd.getBitmap();
+//        Bitmap bitmap = createWatermark(bmp, "叶应是叶" + "http://blog.csdn.net/new_one_object");
+//        mIv.setImageBitmap(bitmap);
+    }
+
+    private Bitmap createWatermark(Bitmap bitmap, String mark) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bmp);
+        Paint p = new Paint();
+        // 水印颜色
+        p.setColor(Color.YELLOW);
+        // 水印字体大小
+        p.setTextSize(20);
+        //抗锯齿
+        p.setAntiAlias(true);
+        //绘制图像
+        canvas.drawBitmap(bitmap, 0, 0, p);
+        //绘制文字
+        canvas.drawText(mark, 0, h / 2, p);
+        canvas.save(Canvas.ALL_SAVE_FLAG);
+        canvas.restore();
+        return bmp;
     }
 
     private void init() {
@@ -102,7 +158,7 @@ public class GoodsActivity extends AppCompatActivity implements GoodsPropertyAda
                 }
             }
             mTvCount.setText("商品数量:" + count + "\t商品id" + goodsID);
-        }else {
+        } else {
             mTvCount.setText("商品数量");
         }
     }
