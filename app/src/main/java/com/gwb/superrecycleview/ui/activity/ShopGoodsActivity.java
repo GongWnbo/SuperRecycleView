@@ -2,6 +2,7 @@ package com.gwb.superrecycleview.ui.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.graphics.Path;
@@ -13,6 +14,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AnimationSet;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -159,22 +162,20 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
     }
 
     public void animOpen(final ImageView imageView) {
-        ObjectAnimator oa = ObjectAnimator.ofFloat(imageView, "translationX", addLeft - reduceLeft, 0);
-        oa.setDuration(300);
-        oa.start();
-        ObjectAnimator oa1 = ObjectAnimator.ofFloat(imageView, "rotation", 0, 180);
-        oa1.setDuration(300);
-        oa1.start();
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator translationAnim = ObjectAnimator.ofFloat(imageView, "translationX", addLeft - reduceLeft, 0);
+        ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(imageView, "rotation", 0, 180);
+        animatorSet.play(translationAnim).with(rotationAnim);
+        animatorSet.setDuration(300).start();
     }
 
     public void animClose(final ImageView imageView) {
-        ObjectAnimator oa = ObjectAnimator.ofFloat(imageView, "translationX", 0, addLeft - reduceLeft);
-        oa.setDuration(300);
-        oa.start();
-        ObjectAnimator oa1 = ObjectAnimator.ofFloat(imageView, "rotation", 0, 180);
-        oa1.setDuration(300);
-        oa1.start();
-        oa.addListener(new AnimatorListenerAdapter() {
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator translationAnim = ObjectAnimator.ofFloat(imageView, "translationX", 0, addLeft - reduceLeft);
+        ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(imageView, "rotation", 0, 180);
+        animatorSet.play(translationAnim).with(rotationAnim);
+        animatorSet.setDuration(300).start();
+        animatorSet.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 // TODO: 2018/5/19 因为属性动画会改变位置,所以当结束的时候,要回退的到原来的位置,同时用补间动画的位移不好控制
@@ -188,26 +189,26 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
 
     public void addGoods2CartAnim(ImageView goodsImageView) {
         final ImageView goods = new ImageView(ShopGoodsActivity.this);
-        goods.setImageResource(R.mipmap.ic_launcher);
-        int size = Util.dp2px(ShopGoodsActivity.this, 16);
+        goods.setImageResource(R.mipmap.icon_goods_add);
+        int size = Util.dp2px(ShopGoodsActivity.this, 24);
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(size, size);
         goods.setLayoutParams(lp);
         mFl.addView(goods);
-        // 父布局的位置
-        int[] parentLocation = new int[2];
-        mFl.getLocationInWindow(parentLocation);
+        // 控制点的位置
+        int[] recyclerLocation = new int[2];
+        mRvGoods.getLocationInWindow(recyclerLocation);
         // 加入点的位置起始点
         int[] startLocation = new int[2];
         goodsImageView.getLocationInWindow(startLocation);
         // 购物车的位置终点
         int[] endLocation = new int[2];
         mIvShoppingCart.getLocationInWindow(endLocation);
-
-        int startX = startLocation[0] - parentLocation[0] + goodsImageView.getWidth() / 2;
-        int startY = startLocation[1] - parentLocation[1] + goodsImageView.getHeight() / 2;
-
-        int endX = endLocation[0] - parentLocation[0] + mIvShoppingCart.getWidth() / 5 * 3;
-        int endY = endLocation[1] - parentLocation[1];
+        // TODO: 2018/5/21 0021 考虑到状态栏的问题，不然会往下偏移状态栏的高度
+        int startX = startLocation[0] - recyclerLocation[0];
+        int startY = startLocation[1] - recyclerLocation[1];
+        // TODO: 2018/5/21 0021 和上面一样
+        int endX = endLocation[0] - recyclerLocation[0];
+        int endY = endLocation[1] - recyclerLocation[1];
         // 开始绘制贝塞尔曲线
         Path path = new Path();
         // 移动到起始点位置(即贝塞尔曲线的起点)
@@ -218,10 +219,14 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
         final PathMeasure pathMeasure = new PathMeasure(path, false);
         // 属性动画实现（从0到贝塞尔曲线的长度之间进行插值计算，获取中间过程的距离值）
         ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, pathMeasure.getLength());
-        valueAnimator.setDuration(500);
+        // 计算距离
+        int tempX = Math.abs(startX - endX);
+        int tempY = Math.abs(startY - endY);
+        // 根据距离计算时间
+        int time = (int) (0.3 * Math.sqrt((tempX * tempX) + tempY * tempY));
+        valueAnimator.setDuration(time);
         valueAnimator.start();
-        // 匀速线性插值器
-
+        valueAnimator.setInterpolator(new AccelerateInterpolator());
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
