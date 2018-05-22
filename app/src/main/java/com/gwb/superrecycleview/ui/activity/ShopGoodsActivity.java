@@ -13,15 +13,14 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -32,6 +31,7 @@ import com.gwb.superrecycleview.adapter.BaseAdapter;
 import com.gwb.superrecycleview.adapter.BaseViewHolder;
 import com.gwb.superrecycleview.entity.ShopGoodsBean;
 import com.gwb.superrecycleview.imp.AppBarStateChangeListener;
+import com.gwb.superrecycleview.ui.dialog.CartGoodsDialog;
 import com.gwb.superrecycleview.utils.ToastUtil;
 import com.gwb.superrecycleview.utils.Util;
 import com.orhanobut.logger.Logger;
@@ -79,6 +79,14 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
         initToolbar();
         // 设置状态栏的颜色
         StatusBarCompat.setStatusBarColor(this, Color.parseColor("#79C4FE"), false);
+        //        ShoppingCartDialog dialog = new ShoppingCartDialog();
+        //        dialog.show(getFragmentManager(), "shoppingCart");
+        //        dialog.setShoppingCartDialogListener(new ShoppingCartDialog.ShoppingCartDialogListener() {
+        //            @Override
+        //            public void clear() {
+        //                ToastUtil.showToast(ShopGoodsActivity.this, "删除");
+        //            }
+        //        });
     }
 
     private void initToolbar() {
@@ -306,8 +314,23 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
         });
     }
 
-    @OnClick(R.id.iv_back)
-    public void onViewClicked() {
-        ToastUtil.showToast(ShopGoodsActivity.this, "返回");
+    @OnClick({R.id.iv_back, R.id.layout_shopping_cart,R.id.tv_shopping_cart_pay})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.iv_back:
+                ToastUtil.showToast(ShopGoodsActivity.this, "返回");
+                break;
+            case R.id.layout_shopping_cart:
+                CartGoodsDialog dialog = new CartGoodsDialog();
+                dialog.show(getFragmentManager(), "cartGoods");
+
+                // 设置状态栏的颜色
+//                StatusBarCompat.setStatusBarColor(this, Color.parseColor("#5D96C5"), false);
+                break;
+            case R.id.tv_shopping_cart_pay:
+                ToastUtil.showToast(ShopGoodsActivity.this,"去支付");
+                break;
+        }
     }
+
 }

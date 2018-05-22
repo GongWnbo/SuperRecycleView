@@ -40,7 +40,7 @@ dependencies {
     // SmartRefreshLayout
     compile 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-5'
     implementation 'com.android.support:design:27.1.1'
-    // status-bar-compat
+// status-bar-compat
     compile 'com.githang:status-bar-compat:latest.integration'
     //  logger
     implementation 'com.orhanobut:logger:2.1.1'

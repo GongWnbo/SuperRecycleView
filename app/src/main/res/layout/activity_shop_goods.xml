@@ -161,50 +161,7 @@
         android:background="#ffffff"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="bottom"
-        android:background="@color/white">
-
-        <ImageView
-            android:id="@+id/iv_shopping_cart"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="9dp"
-            android:src="@mipmap/icon_shopping_cart"/>
-
-        <TextView
-            android:id="@+id/tv_shopping_cart_count"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="20dp"
-            android:background="@drawable/red_circle"
-            android:gravity="center"
-            android:text="1"
-            android:textColor="@color/white"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/tv_shopping_cart_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="18dp"
-            android:layout_toRightOf="@id/iv_shopping_cart"
-            android:text="￥47.00"
-            android:textColor="#4F4D4D"
-            android:textSize="16sp"/>
-
-        <TextView
-            android:layout_width="122dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/red_gradient_rectangle"
-            android:gravity="center"
-            android:text="去结算"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"/>
-    </RelativeLayout>
+    <include
+        android:id="@+id/layout_shopping_cart"
+        layout="@layout/layout_shopping_cart"/>
 </android.support.design.widget.CoordinatorLayout>

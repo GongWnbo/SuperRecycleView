@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70dp">
+
+    <TextView
+        android:id="@+id/tv_cart_goods_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:text="小猪包套餐"
+        android:textColor="#4F4D4D"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="126dp"
+        android:text="￥7.00"
+        android:textColor="#C7A89A"
+        android:textSize="14sp"/>
+
+    <ImageView
+        android:id="@+id/iv_cart_goods_add"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:src="@mipmap/icon_goods_add"/>
+
+    <TextView
+        android:id="@+id/tv_cart_goods_count"
+        android:layout_width="34dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/iv_cart_goods_add"
+        android:gravity="center"
+        android:text="3"
+        android:textColor="#333333"
+        android:textSize="14sp"/>
+
+    <ImageView
+        android:id="@+id/iv_cart_goods_reduce"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/tv_cart_goods_count"
+        android:src="@mipmap/icon_goods_reduce"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="#F8F8F8"/>
+</RelativeLayout>
