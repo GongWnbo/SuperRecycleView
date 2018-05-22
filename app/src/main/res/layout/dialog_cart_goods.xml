@@ -71,5 +71,7 @@
         android:layout_height="1dp"
         android:background="#F8F8F8"/>
 
-    <include layout="@layout/layout_shopping_cart"/>
+    <include
+        android:id="@+id/rv_cart_goods"
+        layout="@layout/layout_shopping_cart"/>
 </LinearLayout>

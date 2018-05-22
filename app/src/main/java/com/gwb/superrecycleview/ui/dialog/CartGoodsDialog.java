@@ -1,5 +1,6 @@
 package com.gwb.superrecycleview.ui.dialog;
 
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -22,6 +23,7 @@ import butterknife.OnClick;
  * Created by ${GongWenbo} on 2018/5/22 0022.
  */
 public class CartGoodsDialog extends BaseDialog implements BaseAdapter.BaseAdapterListener<ShopGoodsBean> {
+    public static final String CART_GOODS = "cartGoods";
     @BindView(R.id.rv_cart_goods)
     RecyclerView mRvCartGoods;
     List<ShopGoodsBean> list = new ArrayList<>();
@@ -29,13 +31,22 @@ public class CartGoodsDialog extends BaseDialog implements BaseAdapter.BaseAdapt
 
     @Override
     protected void init() {
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            list = (List<ShopGoodsBean>) bundle.getSerializable(CART_GOODS);
+            // 将没有个数的商品移除
+            for (int i = 0; i < list.size(); i++) {
+                ShopGoodsBean shopGoodsBean = list.get(i);
+                if (shopGoodsBean.getCount() == 0) {
+                    list.remove(shopGoodsBean);
+                    i--;
+                }
+            }
+        }
         initAdapter();
     }
 
     private void initAdapter() {
-        for (int i = 0; i < 2; i++) {
-            list.add(new ShopGoodsBean(i + 1));
-        }
         if (list.size() >= 4) {
             ViewGroup.LayoutParams lp = mRvCartGoods.getLayoutParams();
             lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -75,7 +86,7 @@ public class CartGoodsDialog extends BaseDialog implements BaseAdapter.BaseAdapt
     public void convert(final BaseViewHolder holder, final ShopGoodsBean shopGoodsBean) {
         int position = holder.getLayoutPosition();
         // 商品名
-        holder.setTitle(R.id.tv_cart_goods_title, "小猪包套餐" + position);
+        holder.setTitle(R.id.tv_cart_goods_title, shopGoodsBean.getGoods());
         // 添加
         holder.getView(R.id.iv_cart_goods_add).setOnClickListener(new View.OnClickListener() {
             @Override

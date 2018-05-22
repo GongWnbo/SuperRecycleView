@@ -37,7 +37,6 @@ import com.gwb.superrecycleview.utils.Util;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,7 +62,7 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
     TextView          mTvTitle;
     @BindView(R.id.rl_header)
     RelativeLayout    mRlHeader;
-    private List<ShopGoodsBean> mGoodsList       = new ArrayList<>();
+    private ArrayList<ShopGoodsBean> mGoodsList       = new ArrayList<>();
     // 贝塞尔曲线中间过程点坐标
     private float[]             mCurrentPosition = new float[2];
     private int goodsCount;
@@ -122,7 +121,7 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
 
     private void initData() {
         for (int i = 0; i < 10; i++) {
-            mGoodsList.add(new ShopGoodsBean(0));
+            mGoodsList.add(new ShopGoodsBean(0, "小猪包套餐" + i));
         }
     }
 
@@ -217,7 +216,7 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
         tv_goods_count.setText(count == 0 ? "" : String.valueOf(count));
         iv_goods_reduce.setVisibility(count == 0 ? View.INVISIBLE : View.VISIBLE);
         // 标题
-        holder.setTitle(R.id.tv_goods_title, "小猪包套餐" + holder.getLayoutPosition() + "\t" + count);
+        holder.setTitle(R.id.tv_goods_title, bean.getGoods());
         System.out.println("position" + holder.getLayoutPosition() + ",reduce=" + iv_goods_reduce.getLeft() + ",add=" + iv_goods_add.getLeft());
     }
 
@@ -314,21 +313,25 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
         });
     }
 
-    @OnClick({R.id.iv_back, R.id.layout_shopping_cart,R.id.tv_shopping_cart_pay})
+    @OnClick({R.id.iv_back, R.id.layout_shopping_cart, R.id.tv_shopping_cart_pay})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
                 ToastUtil.showToast(ShopGoodsActivity.this, "返回");
                 break;
             case R.id.layout_shopping_cart:
+                Logger.d("商品" + mGoodsList);
                 CartGoodsDialog dialog = new CartGoodsDialog();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(CartGoodsDialog.CART_GOODS,mGoodsList);
+                dialog.setArguments(bundle);
                 dialog.show(getFragmentManager(), "cartGoods");
 
                 // 设置状态栏的颜色
-//                StatusBarCompat.setStatusBarColor(this, Color.parseColor("#5D96C5"), false);
+                //                StatusBarCompat.setStatusBarColor(this, Color.parseColor("#5D96C5"), false);
                 break;
             case R.id.tv_shopping_cart_pay:
-                ToastUtil.showToast(ShopGoodsActivity.this,"去支付");
+                ToastUtil.showToast(ShopGoodsActivity.this, "去支付");
                 break;
         }
     }
