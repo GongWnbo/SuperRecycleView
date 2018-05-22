@@ -5,33 +5,43 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AnimationSet;
-import android.widget.FrameLayout;
+import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.githang.statusbar.StatusBarCompat;
 import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.BaseAdapter;
 import com.gwb.superrecycleview.adapter.BaseViewHolder;
 import com.gwb.superrecycleview.entity.ShopGoodsBean;
+import com.gwb.superrecycleview.imp.AppBarStateChangeListener;
 import com.gwb.superrecycleview.utils.ToastUtil;
 import com.gwb.superrecycleview.utils.Util;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.BaseAdapterListener<ShopGoodsBean> {
 
@@ -39,12 +49,20 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
     RecyclerView mRvGoods;
     int reduceLeft = 0;
     int addLeft    = 0;
-    @BindView(R.id.fl)
-    FrameLayout mFl;
+    @BindView(R.id.coordinatorLayout)
+    CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.iv_shopping_cart)
-    ImageView   mIvShoppingCart;
+    ImageView         mIvShoppingCart;
     @BindView(R.id.tv_shopping_cart_count)
-    TextView    mTvShoppingCartCount;
+    TextView          mTvShoppingCartCount;
+    @BindView(R.id.toolbar)
+    Toolbar           mToolbar;
+    @BindView(R.id.appBarLayout)
+    AppBarLayout      mAppBarLayout;
+    @BindView(R.id.tv_title)
+    TextView          mTvTitle;
+    @BindView(R.id.rl_header)
+    RelativeLayout    mRlHeader;
     private List<ShopGoodsBean> mGoodsList       = new ArrayList<>();
     // 贝塞尔曲线中间过程点坐标
     private float[]             mCurrentPosition = new float[2];
@@ -58,6 +76,40 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
         ButterKnife.bind(this);
         initData();
         initView();
+        initToolbar();
+        // 设置状态栏的颜色
+        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#79C4FE"), false);
+    }
+
+    private void initToolbar() {
+        setSupportActionBar(mToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("");
+        mAppBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
+            @Override
+            public void onStateChanged(AppBarLayout appBarLayout, State state) {
+                if (state == State.EXPANDED) {
+                    // 展开状态
+                    mTvTitle.setText("");
+                    mRlHeader.setVisibility(View.VISIBLE);
+                } else if (state == State.COLLAPSED) {
+                    // 折叠状态
+                    mTvTitle.setText("芭比馒头");
+                    mRlHeader.setVisibility(View.GONE);
+                } else {
+                    mTvTitle.setText("");
+                    mRlHeader.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onStateChanged(int i) {
+                float height = mRlHeader.getHeight();
+                float alpha = i / height;
+                Logger.d("透明度" + (1 - Math.abs(alpha)));
+                mRlHeader.setAlpha(1 - Math.abs(alpha));
+            }
+        });
     }
 
     private void initData() {
@@ -193,10 +245,10 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
         int size = Util.dp2px(ShopGoodsActivity.this, 24);
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(size, size);
         goods.setLayoutParams(lp);
-        mFl.addView(goods);
+        mCoordinatorLayout.addView(goods);
         // 控制点的位置
         int[] recyclerLocation = new int[2];
-        mRvGoods.getLocationInWindow(recyclerLocation);
+        mCoordinatorLayout.getLocationInWindow(recyclerLocation);
         // 加入点的位置起始点
         int[] startLocation = new int[2];
         goodsImageView.getLocationInWindow(startLocation);
@@ -247,10 +299,15 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
             @Override
             public void onAnimationEnd(Animator animation) {
                 // 移除图片
-                mFl.removeView(goods);
+                mCoordinatorLayout.removeView(goods);
                 // 购物车数量增加
                 mTvShoppingCartCount.setText(String.valueOf(goodsCount));
             }
         });
+    }
+
+    @OnClick(R.id.iv_back)
+    public void onViewClicked() {
+        ToastUtil.showToast(ShopGoodsActivity.this, "返回");
     }
 }
