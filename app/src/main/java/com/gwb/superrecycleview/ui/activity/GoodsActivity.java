@@ -1,20 +1,21 @@
 package com.gwb.superrecycleview.ui.activity;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ import com.google.gson.Gson;
 import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.GoodsPropertyAdapter;
 import com.gwb.superrecycleview.entity.GoodsPropertyBean;
+import com.gwb.superrecycleview.ui.BaseActivity;
 import com.gwb.superrecycleview.utils.ToastUtil;
 
 import java.util.ArrayList;
@@ -35,7 +37,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class GoodsActivity extends AppCompatActivity implements GoodsPropertyAdapter.GoodsSelectListener {
+import static com.gyf.barlibrary.ImmersionBar.getStatusBarHeight;
+
+public class GoodsActivity extends BaseActivity implements GoodsPropertyAdapter.GoodsSelectListener {
     private static final String TAG = "GoodsActivity";
     @BindView(R.id.rv_show)
     RecyclerView mRvShow;
@@ -52,13 +56,46 @@ public class GoodsActivity extends AppCompatActivity implements GoodsPropertyAda
     private List<GoodsPropertyBean.StockGoodsBean> mStockGoods;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_goods);
-        ButterKnife.bind(this);
+    protected int getLayoutId() {
+        return R.layout.activity_goods;
+    }
+
+    @Override
+    protected String setTitle() {
+        return "SKU";
+    }
+
+    @Override
+    protected String setRightTitle() {
+        return null;
+    }
+
+    @Override
+    protected void initView() {
+        //设置 paddingTop
+        ViewGroup rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+        rootView.setPadding(0, getStatusBarHeight(this), 0, 0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //5.0 以上直接设置状态栏颜色
+            getWindow().setStatusBarColor(Color.parseColor("#FF4081"));
+        } else {
+            //根布局添加占位状态栏
+            ViewGroup decorView = (ViewGroup) getWindow().getDecorView();
+            View statusBarView = new View(this);
+            ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    getStatusBarHeight(this));
+            statusBarView.setBackgroundColor(Color.parseColor("#FF4081"));
+            decorView.addView(statusBarView, lp);
+        }
+
         init();
         // 水印
         watermark();
+    }
+
+    @Override
+    protected void initData(Bundle savedInstanceState) {
+
     }
 
     private void watermark() {
@@ -72,11 +109,11 @@ public class GoodsActivity extends AppCompatActivity implements GoodsPropertyAda
             }
         });
 
-//        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_launcher);
-//        BitmapDrawable bd = (BitmapDrawable) drawable;
-//        Bitmap bmp = bd.getBitmap();
-//        Bitmap bitmap = createWatermark(bmp, "叶应是叶" + "http://blog.csdn.net/new_one_object");
-//        mIv.setImageBitmap(bitmap);
+        //        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_launcher);
+        //        BitmapDrawable bd = (BitmapDrawable) drawable;
+        //        Bitmap bmp = bd.getBitmap();
+        //        Bitmap bitmap = createWatermark(bmp, "叶应是叶" + "http://blog.csdn.net/new_one_object");
+        //        mIv.setImageBitmap(bitmap);
     }
 
     private Bitmap createWatermark(Bitmap bitmap, String mark) {
@@ -172,4 +209,10 @@ public class GoodsActivity extends AppCompatActivity implements GoodsPropertyAda
             ToastUtil.showToast(this, "下单成功");
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+    }
 }

@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.gwb.superrecycleview"
-        minSdkVersion 18
+        minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -44,4 +44,6 @@ dependencies {
     compile 'com.githang:status-bar-compat:latest.integration'
     //  logger
     implementation 'com.orhanobut:logger:2.1.1'
+
+    compile 'com.gyf.barlibrary:barlibrary:2.3.0'
 }

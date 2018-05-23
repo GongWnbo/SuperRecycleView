@@ -5,9 +5,11 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -34,12 +36,15 @@ import com.gwb.superrecycleview.ui.dialog.ShoppingCartDialog;
 import com.gwb.superrecycleview.utils.ToastUtil;
 import com.gwb.superrecycleview.utils.Util;
 import com.orhanobut.logger.Logger;
+import com.scwang.smartrefresh.layout.util.DensityUtil;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.gyf.barlibrary.ImmersionBar.getStatusBarHeight;
 
 public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdapter.BaseAdapterListener<ShopGoodsBean> {
 
@@ -76,8 +81,7 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
         initData();
         initView();
         initToolbar();
-        // 设置状态栏的颜色
-        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#79C4FE"), false);
+        initHeight();
     }
 
     private void initToolbar() {
@@ -109,6 +113,22 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
                 mRlHeader.setAlpha(1 - Math.abs(alpha));
             }
         });
+    }
+
+    public void initHeight() {
+        // ToolBar的top值
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) mToolbar.getLayoutParams();
+        lp.topMargin = (int) getStatusBarHeight(this);
+        mToolbar.setLayoutParams(lp);
+        // AppBarLayout的高度
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) mAppBarLayout.getLayoutParams();
+        layoutParams.height = DensityUtil.dp2px(200) + (int) getStatusBarHeight(this);
+        mAppBarLayout.setLayoutParams(layoutParams);
+    }
+
+    private double getStatusBarHeight(Context context) {
+        double statusBarHeight = Math.ceil(25 * context.getResources().getDisplayMetrics().density);
+        return statusBarHeight;
     }
 
     private void initData() {

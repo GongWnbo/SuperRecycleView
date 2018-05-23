@@ -18,7 +18,7 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#79C4FE"
+            android:background="@mipmap/icon_shopping_goods_bg"
             app:expandedTitleMarginStart="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
