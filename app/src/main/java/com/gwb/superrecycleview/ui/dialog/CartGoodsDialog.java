@@ -1,17 +1,22 @@
 package com.gwb.superrecycleview.ui.dialog;
 
+import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.BaseAdapter;
 import com.gwb.superrecycleview.adapter.BaseViewHolder;
 import com.gwb.superrecycleview.entity.ShopGoodsBean;
-import com.gwb.superrecycleview.ui.activity.ShopGoodsActivity;
 import com.gwb.superrecycleview.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.util.DensityUtil;
 
@@ -19,7 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * Created by ${GongWenbo} on 2018/5/22 0022.
@@ -30,7 +37,10 @@ public class CartGoodsDialog extends BaseDialog implements BaseAdapter.BaseAdapt
     RecyclerView mRvCartGoods;
     List<ShopGoodsBean> list = new ArrayList<>();
     @BindView(R.id.tv_shopping_cart_count)
-    TextView mTvShoppingCartCount;
+    TextView     mTvShoppingCartCount;
+    @BindView(R.id.ll_shopping_cart)
+    LinearLayout mLlShoppingCart;
+    Unbinder unbinder;
     private BaseAdapter             mAdapter;
     private int                     allCount;
     private CartGoodsDialogListener mCartGoodsDialogListener;
@@ -55,6 +65,13 @@ public class CartGoodsDialog extends BaseDialog implements BaseAdapter.BaseAdapt
             mTvShoppingCartCount.setText(String.valueOf(allCount));
         }
         initAdapter();
+
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics dm = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(dm);
+        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(mLlShoppingCart, "translationY", dm.heightPixels, 0);
+        objectAnimator.setDuration(300);
+        objectAnimator.start();
     }
 
     private void initAdapter() {
@@ -157,6 +174,20 @@ public class CartGoodsDialog extends BaseDialog implements BaseAdapter.BaseAdapt
 
     public void setCartGoodsDialogListener(CartGoodsDialogListener cartGoodsDialogListener) {
         mCartGoodsDialogListener = cartGoodsDialogListener;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        unbinder = ButterKnife.bind(this, rootView);
+        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     public interface CartGoodsDialogListener {
