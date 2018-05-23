@@ -1,5 +1,7 @@
 package com.gwb.superrecycleview.ui.dialog;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
@@ -44,6 +46,7 @@ public class CartGoodsDialog extends BaseDialog implements BaseAdapter.BaseAdapt
     private BaseAdapter             mAdapter;
     private int                     allCount;
     private CartGoodsDialogListener mCartGoodsDialogListener;
+    private int                     mHeightPixels;
 
     @Override
     protected void init() {
@@ -69,7 +72,8 @@ public class CartGoodsDialog extends BaseDialog implements BaseAdapter.BaseAdapt
         WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics dm = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(dm);
-        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(mLlShoppingCart, "translationY", dm.heightPixels, 0);
+        mHeightPixels = dm.heightPixels;
+        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(mLlShoppingCart, "translationY", mHeightPixels, 0);
         objectAnimator.setDuration(300);
         objectAnimator.start();
     }
@@ -106,7 +110,16 @@ public class CartGoodsDialog extends BaseDialog implements BaseAdapter.BaseAdapt
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.view_shadow:
-                dismiss();
+                ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(mLlShoppingCart, "translationY", 0, mHeightPixels);
+                objectAnimator.setDuration(300);
+                objectAnimator.start();
+                objectAnimator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        dismiss();
+                    }
+                });
                 break;
             case R.id.tv_cart_goods_clear:
                 ShoppingCartDialog dialog = new ShoppingCartDialog();
