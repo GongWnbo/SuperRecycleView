@@ -18,6 +18,7 @@ import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.BaseAdapter;
 import com.gwb.superrecycleview.adapter.BaseViewHolder;
 import com.gwb.superrecycleview.entity.ShopGoodsBean;
+import com.gwb.superrecycleview.ui.activity.ShoppingGoodsActivity;
 import com.gwb.superrecycleview.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.util.DensityUtil;
 
@@ -143,7 +144,11 @@ public class ShoppingCartDialog extends BaseDialog implements BaseAdapter.BaseAd
                 break;
             // 去支付
             case R.id.tv_shopping_cart_pay:
-                ToastUtil.showToast(mContext, "去支付");
+                String remind = "购物车中空空如也";
+                if (allCount > 0) {
+                    remind = "去支付";
+                }
+                ToastUtil.showToast(mContext, remind);
                 break;
         }
     }
@@ -175,9 +180,9 @@ public class ShoppingCartDialog extends BaseDialog implements BaseAdapter.BaseAd
             public void onClick(View v) {
                 int count = shopGoodsBean.getCount();
                 count++;
+                allCount++;
                 shopGoodsBean.setCount(count);
                 holder.setTitle(R.id.tv_cart_goods_count, String.valueOf(count));
-                allCount++;
                 mTvShoppingCartCount.setText(String.valueOf(allCount));
                 if (mCartGoodsDialogListener != null) {
                     mCartGoodsDialogListener.add(allCount, shopGoodsBean);
@@ -190,6 +195,7 @@ public class ShoppingCartDialog extends BaseDialog implements BaseAdapter.BaseAd
             public void onClick(View v) {
                 int count = shopGoodsBean.getCount();
                 count--;
+                allCount--;
                 if (count == 0) {
                     int layoutPosition = holder.getLayoutPosition();
                     list.remove(layoutPosition);
@@ -198,7 +204,7 @@ public class ShoppingCartDialog extends BaseDialog implements BaseAdapter.BaseAd
                     holder.setTitle(R.id.tv_cart_goods_count, String.valueOf(count));
                 }
                 shopGoodsBean.setCount(count);
-                allCount--;
+                // 防止点击过快
                 if (allCount <= 0) {
                     allCount = 0;
                     mTvShoppingCartCount.setVisibility(View.GONE);

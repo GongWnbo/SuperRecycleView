@@ -43,6 +43,7 @@ import butterknife.OnClick;
 
 public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdapter.BaseAdapterListener<ShopGoodsBean> {
 
+    private static final long TIME = 300;   // 动画的执行时间
     @BindView(R.id.rv_goods)
     RecyclerView mRvGoods;
     int reduceLeft = 0;
@@ -64,7 +65,7 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
     private ArrayList<ShopGoodsBean> mGoodsList       = new ArrayList<>();
     // 贝塞尔曲线中间过程点坐标
     private float[]                  mCurrentPosition = new float[2];
-    private int         goodsCount;
+    private int         allCount;
     private BaseAdapter mAdapter;
 
     @Override
@@ -128,8 +129,8 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
     public void convert(final BaseViewHolder holder, ShopGoodsBean bean) {
         // 原价
         TextView tv_goods_original_price = holder.getView(R.id.tv_goods_original_price);
+        // 中划线
         Util.drawStrikethrough(tv_goods_original_price);
-        // TODO: 2018/5/18 0018 动画效果
         // 商品数
         final TextView tv_goods_count = holder.getView(R.id.tv_goods_count);
         // 减少
@@ -148,28 +149,27 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
                 ShopGoodsBean shopGoodsBean = mGoodsList.get(position);
                 int count = shopGoodsBean.getCount();
                 count--;
+                allCount--;
+                // 防止过快点击出现多个关闭动画
                 if (count == 0) {
                     animClose(iv_goods_reduce);
                     tv_goods_count.setText("");
                     // 考虑到用户点击过快
-                    goodsCount--;
                 } else if (count < 0) {
-                    // TODO: 2018/5/18 0018 如果用户点击过快
+                    // 防止过快点击出现商品数为负数
                     count = 0;
                 } else {
-                    // 考虑到用户点击过快
-                    goodsCount--;
                     tv_goods_count.setText(String.valueOf(count));
                 }
                 // 商品的数量是否显示
-                if (goodsCount == 0) {
+                if (allCount <= 0) {
+                    allCount = 0;
                     mTvShoppingCartCount.setVisibility(View.GONE);
                 } else {
-                    mTvShoppingCartCount.setText(String.valueOf(goodsCount));
+                    mTvShoppingCartCount.setText(String.valueOf(allCount));
                     mTvShoppingCartCount.setVisibility(View.VISIBLE);
                 }
                 shopGoodsBean.setCount(count);
-                ToastUtil.showToast(ShoppingGoodsActivity.this, "减少");
             }
         });
         // 增加
@@ -188,15 +188,14 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
                 ShopGoodsBean shopGoodsBean = mGoodsList.get(position);
                 int count = shopGoodsBean.getCount();
                 count++;
-                goodsCount++;
-                if (goodsCount > 0) {
+                allCount++;
+                if (allCount > 0) {
                     mTvShoppingCartCount.setVisibility(View.VISIBLE);
                 }
-                mTvShoppingCartCount.setText(String.valueOf(goodsCount));
+                mTvShoppingCartCount.setText(String.valueOf(allCount));
                 if (count == 1) {
                     iv_goods_reduce.setVisibility(View.VISIBLE);
                     animOpen(iv_goods_reduce);
-                    ToastUtil.showToast(ShoppingGoodsActivity.this, "增加");
                 }
                 addGoods2CartAnim(iv_goods_add);
                 tv_goods_count.setText(String.valueOf(count));
@@ -208,7 +207,6 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
         iv_goods_reduce.setVisibility(count == 0 ? View.INVISIBLE : View.VISIBLE);
         // 标题
         holder.setTitle(R.id.tv_goods_title, bean.getGoods());
-        System.out.println("position" + holder.getLayoutPosition() + ",reduce=" + iv_goods_reduce.getLeft() + ",add=" + iv_goods_add.getLeft());
     }
 
     public void animOpen(final ImageView imageView) {
@@ -216,7 +214,7 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
         ObjectAnimator translationAnim = ObjectAnimator.ofFloat(imageView, "translationX", addLeft - reduceLeft, 0);
         ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(imageView, "rotation", 0, 180);
         animatorSet.play(translationAnim).with(rotationAnim);
-        animatorSet.setDuration(300).start();
+        animatorSet.setDuration(TIME).start();
     }
 
     public void animClose(final ImageView imageView) {
@@ -224,7 +222,7 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
         ObjectAnimator translationAnim = ObjectAnimator.ofFloat(imageView, "translationX", 0, addLeft - reduceLeft);
         ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(imageView, "rotation", 0, 180);
         animatorSet.play(translationAnim).with(rotationAnim);
-        animatorSet.setDuration(300).start();
+        animatorSet.setDuration(TIME).start();
         animatorSet.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -237,6 +235,11 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
         });
     }
 
+    /**
+     * 贝塞尔曲线动画
+     *
+     * @param goodsImageView
+     */
     public void addGoods2CartAnim(ImageView goodsImageView) {
         final ImageView goods = new ImageView(ShoppingGoodsActivity.this);
         goods.setImageResource(R.mipmap.icon_goods_add);
@@ -299,7 +302,7 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
                 // 移除图片
                 mCoordinatorLayout.removeView(goods);
                 // 购物车数量增加
-                mTvShoppingCartCount.setText(String.valueOf(goodsCount));
+                mTvShoppingCartCount.setText(String.valueOf(allCount));
             }
         });
     }
@@ -320,52 +323,52 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
                 dialog.setCartGoodsDialogListener(new ShoppingCartDialog.CartGoodsDialogListener() {
                     @Override
                     public void add(int allCount, ShopGoodsBean shopGoodsBean) {
-                        goodsCount = allCount;
-                        mTvShoppingCartCount.setText(String.valueOf(allCount));
-
-                        for (int i = 0; i < mGoodsList.size(); i++) {
-                            ShopGoodsBean bean = mGoodsList.get(i);
-                            int goodsId = bean.getGoodsId();
-                            if (goodsId == shopGoodsBean.getGoodsId()) {
-                                bean = shopGoodsBean;
-                                mAdapter.notifyItemChanged(i);
-                                break;
-                            }
-                        }
+                        notifyItemChanged(allCount, shopGoodsBean);
                     }
 
                     @Override
                     public void reduce(int allCount, ShopGoodsBean shopGoodsBean) {
-                        goodsCount = allCount;
-                        mTvShoppingCartCount.setVisibility(allCount == 0 ? View.GONE : View.VISIBLE);
-                        mTvShoppingCartCount.setText(String.valueOf(allCount));
-
-                        for (int i = 0; i < mGoodsList.size(); i++) {
-                            ShopGoodsBean bean = mGoodsList.get(i);
-                            int goodsId = bean.getGoodsId();
-                            if (goodsId == shopGoodsBean.getGoodsId()) {
-                                bean = shopGoodsBean;
-                                mAdapter.notifyItemChanged(i);
-                                break;
-                            }
-                        }
+                        notifyItemChanged(allCount, shopGoodsBean);
                     }
 
                     @Override
                     public void clear() {
-                        goodsCount = 0;
-                        mTvShoppingCartCount.setVisibility(View.GONE);
-                        for (ShopGoodsBean bean : mGoodsList) {
-                            bean.setCount(0);
-                        }
-                        mAdapter.notifyDataSetChanged();
+                        clearShoppingGoods();
                     }
                 });
                 break;
             case R.id.tv_shopping_cart_pay:
-                ToastUtil.showToast(ShoppingGoodsActivity.this, "去支付");
+                String remind = "购物车中空空如也";
+                if (allCount > 0) {
+                    remind = "去支付";
+                }
+                ToastUtil.showToast(ShoppingGoodsActivity.this, remind);
                 break;
         }
     }
 
+    public void notifyItemChanged(int allCount, ShopGoodsBean shopGoodsBean) {
+        this.allCount = allCount;
+        mTvShoppingCartCount.setVisibility(allCount == 0 ? View.GONE : View.VISIBLE);
+        mTvShoppingCartCount.setText(String.valueOf(allCount));
+        // 遍历，格局id查找对象
+        for (int i = 0; i < mGoodsList.size(); i++) {
+            ShopGoodsBean bean = mGoodsList.get(i);
+            int goodsId = bean.getGoodsId();
+            if (goodsId == shopGoodsBean.getGoodsId()) {
+                bean = shopGoodsBean;
+                mAdapter.notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
+    public void clearShoppingGoods() {
+        allCount = 0;
+        mTvShoppingCartCount.setVisibility(View.GONE);
+        for (ShopGoodsBean bean : mGoodsList) {
+            bean.setCount(0);
+        }
+        mAdapter.notifyDataSetChanged();
+    }
 }
