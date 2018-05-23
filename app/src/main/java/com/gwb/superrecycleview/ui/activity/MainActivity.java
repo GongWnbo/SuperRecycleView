@@ -7,6 +7,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.BaseAdapter;
@@ -53,24 +55,24 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.BaseA
             mList.add("我是数据" + i);
         }
 
-        //        // header
-        //        TextView tv1 = new TextView(this);
-        //        tv1.setText("header 1");
-        //        mHeaderAndFooterWrapper.addHeader(tv1);
-        //        ImageView iv1 = new ImageView(this);
-        //        iv1.setImageResource(R.mipmap.ic_launcher);
-        //        mHeaderAndFooterWrapper.addHeader(iv1);
-        //        TextView tv2 = new TextView(this);
-        //        tv2.setText("header 2");
-        //        mHeaderAndFooterWrapper.addHeader(tv2);
-        //
-        //        // footer
-        //        TextView tv11 = new TextView(this);
-        //        tv11.setText("footer 1");
-        //        mHeaderAndFooterWrapper.addFooter(tv11);
-        //        TextView tv12 = new TextView(this);
-        //        tv12.setText("footer 2");
-        //        mHeaderAndFooterWrapper.addFooter(tv12);
+        // header
+        TextView tv1 = new TextView(this);
+        tv1.setText("header 1");
+        mHeaderAndFooterWrapper.addHeader(tv1);
+        ImageView iv1 = new ImageView(this);
+        iv1.setImageResource(R.mipmap.ic_launcher);
+        mHeaderAndFooterWrapper.addHeader(iv1);
+        TextView tv2 = new TextView(this);
+        tv2.setText("header 2");
+        mHeaderAndFooterWrapper.addHeader(tv2);
+
+        // footer
+        TextView tv11 = new TextView(this);
+        tv11.setText("footer 1");
+        mHeaderAndFooterWrapper.addFooter(tv11);
+        TextView tv12 = new TextView(this);
+        tv12.setText("footer 2");
+        mHeaderAndFooterWrapper.addFooter(tv12);
 
 
         mRvShow.setLayoutManager(new GridLayoutManager(this, 3));
