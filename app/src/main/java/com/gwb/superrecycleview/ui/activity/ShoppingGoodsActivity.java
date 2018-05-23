@@ -91,9 +91,6 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
     }
 
     private void initToolbar() {
-        //        setSupportActionBar(mToolbar);
-        //        ActionBar actionBar = getSupportActionBar();
-        //        actionBar.setTitle("");
         mAppBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
             @Override
             public void onStateChanged(AppBarLayout appBarLayout, State state) {

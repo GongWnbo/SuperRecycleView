@@ -137,7 +137,7 @@ public class ShoppingCartDialog extends BaseDialog implements BaseAdapter.BaseAd
         getDialog().getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
     }
 
-    @OnClick({R.id.view_shadow, R.id.tv_cart_goods_clear, R.id.tv_shopping_cart_pay})
+    @OnClick({R.id.view_shadow, R.id.ll_cart_goods_clear, R.id.tv_shopping_cart_pay})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             // 点击阴影消失
@@ -145,8 +145,12 @@ public class ShoppingCartDialog extends BaseDialog implements BaseAdapter.BaseAd
                 closeAnim();
                 break;
             // 清空购物车
-            case R.id.tv_cart_goods_clear:
-                clearCartGoodsDialog();
+            case R.id.ll_cart_goods_clear:
+                if (allCount > 0) {
+                    clearCartGoodsDialog();
+                }else {
+                    ToastUtil.showToast(mContext, "购物车中空空如也");
+                }
                 break;
             // 去支付
             case R.id.tv_shopping_cart_pay:
@@ -176,6 +180,7 @@ public class ShoppingCartDialog extends BaseDialog implements BaseAdapter.BaseAd
                     allCount = 0;
                     mTvShoppingCartCount.setVisibility(View.GONE);
                 }
+                dismiss();
             }
         });
     }

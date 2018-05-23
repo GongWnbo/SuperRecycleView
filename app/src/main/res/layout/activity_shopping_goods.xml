@@ -108,8 +108,9 @@
                     <TextView
                         android:id="@+id/tv_goods_get"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_marginRight="19dp"
+                        android:gravity="center"
                         android:text="点击领取"
                         android:textColor="#BCBCBC"
                         android:textSize="12sp"/>
