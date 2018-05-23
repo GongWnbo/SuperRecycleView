@@ -45,12 +45,6 @@ public class ShoppingCartDialog extends BaseDialog {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        getDialog().getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
-    }
-
     public void setShoppingCartDialogListener(ShoppingCartDialogListener shoppingCartDialogListener) {
         mShoppingCartDialogListener = shoppingCartDialogListener;
     }

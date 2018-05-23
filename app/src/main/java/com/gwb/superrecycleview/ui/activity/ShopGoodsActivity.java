@@ -10,6 +10,7 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +32,7 @@ import com.gwb.superrecycleview.adapter.BaseViewHolder;
 import com.gwb.superrecycleview.entity.ShopGoodsBean;
 import com.gwb.superrecycleview.imp.AppBarStateChangeListener;
 import com.gwb.superrecycleview.ui.dialog.CartGoodsDialog;
+import com.gwb.superrecycleview.ui.dialog.ShoppingCartDialog;
 import com.gwb.superrecycleview.utils.ToastUtil;
 import com.gwb.superrecycleview.utils.Util;
 import com.orhanobut.logger.Logger;
@@ -362,8 +364,6 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
                         mAdapter.notifyDataSetChanged();
                     }
                 });
-                // 设置状态栏的颜色
-                //                StatusBarCompat.setStatusBarColor(this, Color.parseColor("#5D96C5"), false);
                 break;
             case R.id.tv_shopping_cart_pay:
                 ToastUtil.showToast(ShopGoodsActivity.this, "去支付");

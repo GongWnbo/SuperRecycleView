@@ -1,5 +1,6 @@
 package com.gwb.superrecycleview.ui.dialog;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -26,7 +27,7 @@ public abstract class BaseDialog extends DialogFragment {
 
     private static final int TIME = 600;
     protected View               mView;
-    protected Context            mContext;
+    protected Activity           mContext;
     private   BaseDialogListener mBaseDialogListener;
     private Handler mHandler = new Handler() {
         @Override
@@ -80,7 +81,7 @@ public abstract class BaseDialog extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Activity context) {
         super.onAttach(context);
         mContext = context;
     }
@@ -92,7 +93,7 @@ public abstract class BaseDialog extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        getDialog().getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+        getDialog().getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
     }
 
     public void show(FragmentManager manager, String tag) {

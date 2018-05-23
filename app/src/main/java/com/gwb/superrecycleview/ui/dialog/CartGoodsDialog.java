@@ -96,6 +96,12 @@ public class CartGoodsDialog extends BaseDialog implements BaseAdapter.BaseAdapt
         return 0.3f;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getDialog().getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+    }
+
     @OnClick({R.id.view_shadow, R.id.tv_cart_goods_clear, R.id.tv_shopping_cart_pay})
     public void onViewClicked(View view) {
         switch (view.getId()) {
