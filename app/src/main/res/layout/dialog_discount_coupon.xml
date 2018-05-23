@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:background="@drawable/lucency_black_rectangle_10">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:src="@mipmap/icon_discount_coupon_succeed"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="16dp"
+            android:text="优惠券领取成功"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"/>
+    </FrameLayout>
+</FrameLayout>

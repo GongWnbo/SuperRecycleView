@@ -144,13 +144,17 @@ public class ShoppingCartDialog extends BaseDialog implements BaseAdapter.BaseAd
                 break;
             // 去支付
             case R.id.tv_shopping_cart_pay:
-                String remind = "购物车中空空如也";
-                if (allCount > 0) {
-                    remind = "去支付";
-                }
-                ToastUtil.showToast(mContext, remind);
+                pay();
                 break;
         }
+    }
+
+    public void pay() {
+        String remind = "购物车中空空如也";
+        if (allCount > 0) {
+            remind = "去支付";
+        }
+        ToastUtil.showToast(mContext, remind);
     }
 
     public void clearCartGoodsDialog() {

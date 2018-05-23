@@ -23,6 +23,7 @@ import butterknife.ButterKnife;
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected static String   TAG;
+    protected        Toolbar  mToolbar;
     private          TextView mTv_title;
 
     @Override
@@ -54,27 +55,30 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected abstract void initData(Bundle savedInstanceState);
 
     private void initToolBar(String title, String rightTitle) {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
             ActionBar actionBar = getSupportActionBar();
             actionBar.setTitle("");
             TextView tv_right = (TextView) findViewById(R.id.tv_right);
-            if (!TextUtils.isEmpty(rightTitle)) {
+            if (!TextUtils.isEmpty(rightTitle) && tv_right != null) {
                 tv_right.setText(rightTitle);
             }
             mTv_title = (TextView) findViewById(R.id.tv_title);
-            if (!TextUtils.isEmpty(title)) {
+            if (!TextUtils.isEmpty(title) && mTv_title != null) {
                 mTv_title.setText(title);
             }
-            toolbar.setNavigationIcon(R.mipmap.icon_back);
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finish();
-                }
-            });
         }
+    }
+
+    public void autoBack() {
+        mToolbar.setNavigationIcon(R.mipmap.icon_back);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     public void startActivity(Class<? extends BaseActivity> clazz) {

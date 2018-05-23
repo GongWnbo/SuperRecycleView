@@ -32,6 +32,8 @@ import com.gwb.superrecycleview.adapter.BaseAdapter;
 import com.gwb.superrecycleview.adapter.BaseViewHolder;
 import com.gwb.superrecycleview.entity.ShopGoodsBean;
 import com.gwb.superrecycleview.imp.AppBarStateChangeListener;
+import com.gwb.superrecycleview.ui.BaseActivity;
+import com.gwb.superrecycleview.ui.dialog.DiscountCouponDialog;
 import com.gwb.superrecycleview.ui.dialog.ShoppingCartDialog;
 import com.gwb.superrecycleview.utils.ToastUtil;
 import com.gwb.superrecycleview.utils.Util;
@@ -46,7 +48,7 @@ import butterknife.OnClick;
 
 import static com.gyf.barlibrary.ImmersionBar.getStatusBarHeight;
 
-public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdapter.BaseAdapterListener<ShopGoodsBean> {
+public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.BaseAdapterListener<ShopGoodsBean> {
 
     private static final long TIME = 300;   // 动画的执行时间
     @BindView(R.id.rv_goods)
@@ -59,8 +61,8 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
     ImageView         mIvShoppingCart;
     @BindView(R.id.tv_shopping_cart_count)
     TextView          mTvShoppingCartCount;
-    @BindView(R.id.toolbar)
-    Toolbar           mToolbar;
+    //    @BindView(R.id.toolbar)
+    //    Toolbar           mToolbar;
     @BindView(R.id.appBarLayout)
     AppBarLayout      mAppBarLayout;
     @BindView(R.id.tv_title)
@@ -74,20 +76,24 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
     private BaseAdapter mAdapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shopping_goods);
-        ButterKnife.bind(this);
-        initData();
-        initView();
-        initToolbar();
-        initHeight();
+    protected int getLayoutId() {
+        return R.layout.activity_shopping_goods;
+    }
+
+    @Override
+    protected String setTitle() {
+        return null;
+    }
+
+    @Override
+    protected String setRightTitle() {
+        return null;
     }
 
     private void initToolbar() {
-        setSupportActionBar(mToolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("");
+        //        setSupportActionBar(mToolbar);
+        //        ActionBar actionBar = getSupportActionBar();
+        //        actionBar.setTitle("");
         mAppBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
             @Override
             public void onStateChanged(AppBarLayout appBarLayout, State state) {
@@ -138,11 +144,24 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
         }
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
+        initData();
+        initToolbar();
+        initHeight();
+        initAdapter();
+    }
+
+    private void initAdapter() {
         mAdapter = new BaseAdapter(mGoodsList, R.layout.item_shop_goods, this);
         mRvGoods.setLayoutManager(new LinearLayoutManager(this));
         mRvGoods.setAdapter(mAdapter);
         mRvGoods.setItemAnimator(null);
+    }
+
+    @Override
+    protected void initData(Bundle savedInstanceState) {
+
     }
 
     @Override
@@ -327,44 +346,63 @@ public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdap
         });
     }
 
-    @OnClick({R.id.iv_back, R.id.layout_shopping_cart, R.id.tv_shopping_cart_pay})
+    @OnClick({R.id.iv_back, R.id.layout_shopping_cart, R.id.tv_shopping_cart_pay, R.id.tv_goods_get})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            // 返回
             case R.id.iv_back:
                 ToastUtil.showToast(ShoppingGoodsActivity.this, "返回");
                 break;
+            // 购物车的弹窗
             case R.id.layout_shopping_cart:
-                Logger.d("商品" + mGoodsList);
-                ShoppingCartDialog dialog = new ShoppingCartDialog();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(ShoppingCartDialog.CART_GOODS, mGoodsList);
-                dialog.setArguments(bundle);
-                dialog.show(getFragmentManager(), "cartGoods");
-                dialog.setCartGoodsDialogListener(new ShoppingCartDialog.CartGoodsDialogListener() {
-                    @Override
-                    public void add(int allCount, ShopGoodsBean shopGoodsBean) {
-                        notifyItemChanged(allCount, shopGoodsBean);
-                    }
-
-                    @Override
-                    public void reduce(int allCount, ShopGoodsBean shopGoodsBean) {
-                        notifyItemChanged(allCount, shopGoodsBean);
-                    }
-
-                    @Override
-                    public void clear() {
-                        clearShoppingGoods();
-                    }
-                });
+                shoppingCartDialog();
                 break;
+            // 支付
             case R.id.tv_shopping_cart_pay:
-                String remind = "购物车中空空如也";
-                if (allCount > 0) {
-                    remind = "去支付";
-                }
-                ToastUtil.showToast(ShoppingGoodsActivity.this, remind);
+                pay();
+                break;
+            // 领取
+            case R.id.tv_goods_get:
+                showDiscountCouponDialog();
                 break;
         }
+    }
+
+    public void shoppingCartDialog() {
+        ShoppingCartDialog dialog = new ShoppingCartDialog();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ShoppingCartDialog.CART_GOODS, mGoodsList);
+        dialog.setArguments(bundle);
+        dialog.show(getFragmentManager(), "cartGoods");
+        dialog.setCartGoodsDialogListener(new ShoppingCartDialog.CartGoodsDialogListener() {
+            @Override
+            public void add(int allCount, ShopGoodsBean shopGoodsBean) {
+                notifyItemChanged(allCount, shopGoodsBean);
+            }
+
+            @Override
+            public void reduce(int allCount, ShopGoodsBean shopGoodsBean) {
+                notifyItemChanged(allCount, shopGoodsBean);
+            }
+
+            @Override
+            public void clear() {
+                clearShoppingGoods();
+            }
+        });
+    }
+
+    public void showDiscountCouponDialog() {
+        DiscountCouponDialog dialog = new DiscountCouponDialog();
+        dialog.show(getFragmentManager(), "discountCoupon", true);
+    }
+
+    public void pay() {
+        String remind = "购物车中空空如也";
+        if (allCount > 0) {
+            remind = "去支付";
+        }
+        ToastUtil.showToast(ShoppingGoodsActivity.this, remind);
     }
 
     public void notifyItemChanged(int allCount, ShopGoodsBean shopGoodsBean) {
