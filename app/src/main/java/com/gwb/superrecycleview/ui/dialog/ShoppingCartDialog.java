@@ -78,7 +78,7 @@ public class ShoppingCartDialog extends BaseDialog implements BaseAdapter.BaseAd
     }
 
     private void initScreen() {
-        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager wm = (WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics dm = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(dm);
         // 获取屏幕的高度
@@ -112,7 +112,7 @@ public class ShoppingCartDialog extends BaseDialog implements BaseAdapter.BaseAd
             mRvCartGoods.setLayoutParams(lp);
         }
         mAdapter = new BaseAdapter(list, R.layout.item_cart_goods, this);
-        mRvCartGoods.setLayoutManager(new LinearLayoutManager(mContext));
+        mRvCartGoods.setLayoutManager(new LinearLayoutManager(mActivity));
         mRvCartGoods.setAdapter(mAdapter);
     }
 
@@ -149,7 +149,7 @@ public class ShoppingCartDialog extends BaseDialog implements BaseAdapter.BaseAd
                 if (allCount > 0) {
                     clearCartGoodsDialog();
                 }else {
-                    ToastUtil.showToast(mContext, "购物车中空空如也");
+                    ToastUtil.showToast(mActivity, "购物车中空空如也");
                 }
                 break;
             // 去支付
@@ -164,7 +164,7 @@ public class ShoppingCartDialog extends BaseDialog implements BaseAdapter.BaseAd
         if (allCount > 0) {
             remind = "去支付";
         }
-        ToastUtil.showToast(mContext, remind);
+        ToastUtil.showToast(mActivity, remind);
     }
 
     public void clearCartGoodsDialog() {

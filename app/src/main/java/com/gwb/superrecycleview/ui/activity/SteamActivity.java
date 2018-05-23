@@ -12,6 +12,8 @@ import com.google.gson.Gson;
 import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.GoodsPropertyAdapter;
 import com.gwb.superrecycleview.entity.GoodsPropertyBean;
+import com.gwb.superrecycleview.ui.BaseActivity;
+import com.gwb.superrecycleview.ui.BaseFitsSystemWindowsActivity;
 import com.gwb.superrecycleview.ui.wedgit.FlowLayout;
 
 import java.util.List;
@@ -20,22 +22,40 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SteamActivity extends AppCompatActivity {
+public class SteamActivity extends BaseFitsSystemWindowsActivity {
 
     @BindView(R.id.fl)
-    FlowLayout   mFl;
+    FlowLayout mFl;
     private String[] arr = {"京东", "淘宝", "阿里巴巴", "dnf", "神舟七号", "外卖小哥", "马云？？？"};
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_steam);
-        ButterKnife.bind(this);
+    protected int getLayoutId() {
+        return R.layout.activity_steam;
+    }
+
+    @Override
+    protected String setTitle() {
+        return "Steam";
+    }
+
+    @Override
+    protected String setRightTitle() {
+        return null;
+    }
+
+    @Override
+    protected void initView() {
+        mToolbar.setBackgroundColor(getResources().getColor(R.color.colorAccent));
         for (int i = 0; i < 20; i++) {
             Random random = new Random();
             TextView view = getView(arr[random.nextInt(arr.length)]);
             mFl.addView(view);
         }
+    }
+
+    @Override
+    protected void initData(Bundle savedInstanceState) {
+
     }
 
     public TextView getView(String msg) {

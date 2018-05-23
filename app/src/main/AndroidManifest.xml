@@ -11,35 +11,31 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".ui.activity.MainActivity">
-
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN"/>-->
-
-
-            <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-            <!--</intent-filter>-->
-        </activity>
-        <activity android:name=".ui.activity.SteamActivity"/>
-        <activity android:name=".ui.activity.GoodsActivity"
-                  android:theme="@style/TranslucentTheme">
+        android:theme="@style/TranslucentTheme">
+        <activity
+            android:name=".ui.activity.HeaderAndFooterActivity"
+            android:configChanges="orientation|locale|screenSize"/>
+        <activity
+            android:name=".ui.activity.SteamActivity"
+            android:configChanges="orientation|locale|screenSize"/>
+        <activity
+            android:name=".ui.activity.SkuActivity"
+            android:configChanges="orientation|locale|screenSize"
+            android:theme="@style/TranslucentTheme"/>
+        <activity
+            android:name=".ui.activity.RecycleViewActivity"
+            android:configChanges="orientation|locale|screenSize"/>
+        <activity
+            android:name=".ui.activity.ShoppingGoodsActivity"
+            android:configChanges="orientation|locale|screenSize">
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN"/>-->
 
                 <!--<category android:name="android.intent.category.LAUNCHER"/>-->
             <!--</intent-filter>-->
         </activity>
-        <activity android:name=".ui.activity.RecycleViewActivity">
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN"/>-->
-
-            <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-            <!--</intent-filter>-->
-        </activity>
-        <activity
-            android:name=".ui.activity.ShoppingGoodsActivity"
-            android:theme="@style/TranslucentTheme">
+        <activity android:name=".ui.activity.MainActivity"
+                  android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

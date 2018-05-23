@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.gwb.superrecycleview.ui.activity.GoodsActivity">
+    tools:context="com.gwb.superrecycleview.ui.activity.SkuActivity">
 
     <include layout="@layout/layout_toolbar"/>
 

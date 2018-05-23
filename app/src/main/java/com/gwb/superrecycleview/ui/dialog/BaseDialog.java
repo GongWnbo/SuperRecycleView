@@ -27,7 +27,7 @@ public abstract class BaseDialog extends DialogFragment {
 
     private static final int TIME = 600;
     protected View               mView;
-    protected Activity           mContext;
+    protected Activity           mActivity;
     private   BaseDialogListener mBaseDialogListener;
     private Handler mHandler = new Handler() {
         @Override
@@ -83,7 +83,7 @@ public abstract class BaseDialog extends DialogFragment {
     @Override
     public void onAttach(Activity context) {
         super.onAttach(context);
-        mContext = context;
+        mActivity = context;
     }
 
     protected abstract void init();

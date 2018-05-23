@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gwb.superrecycleview.ui.activity.MainActivity">
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context=".ui.activity.MainActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_show"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <LinearLayout
+    <Button
+        android:id="@+id/btn_headerAndFooter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|center_vertical"
-        android:orientation="vertical">
+        android:text="HeaderAndFooter"
+        android:textAllCaps="false"/>
 
-        <Button
-            android:id="@+id/btn_linear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Linear"/>
+    <Button
+        android:id="@+id/btn_sku"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="sku"
+        android:textAllCaps="false"/>
 
-        <Button
-            android:id="@+id/btn_grid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Grid"/>
+    <Button
+        android:id="@+id/btn_steam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="steam"
+        android:textAllCaps="false"/>
 
-        <Button
-            android:id="@+id/btn_stagger"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="stagger"/>
-    </LinearLayout>
-</FrameLayout>
+    <Button
+        android:id="@+id/btn_shoppingGoods"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="shoppingGoods"
+        android:textAllCaps="false"/>
+</LinearLayout>

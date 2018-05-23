@@ -8,11 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gwb.superrecycleview.R;
+import com.gwb.superrecycleview.utils.ActivityManager;
 import com.gwb.superrecycleview.utils.ToastUtil;
+import com.orhanobut.logger.Logger;
 
 import butterknife.ButterKnife;
 
@@ -22,20 +24,20 @@ import butterknife.ButterKnife;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    protected static String   TAG;
-    protected        Toolbar  mToolbar;
-    private          TextView mTv_title;
+    protected Toolbar  mToolbar;
+    private   TextView mTv_title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TAG = getClass().getName();
         setContentView(getLayoutId());
         ButterKnife.bind(this);
         setStatusBarTextLight(false);
         initToolBar(setTitle(), setRightTitle());
         initView();
         initData(savedInstanceState);
+        ActivityManager.getInstance().addActivity(this);
+        Logger.d("Activities" + ActivityManager.getInstance().getActivities());
     }
 
     protected abstract int getLayoutId();
@@ -54,31 +56,26 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected abstract void initData(Bundle savedInstanceState);
 
-    private void initToolBar(String title, String rightTitle) {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+    protected void initToolBar(String title, String rightTitle) {
+        mToolbar = findViewById(R.id.toolbar);
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
             ActionBar actionBar = getSupportActionBar();
             actionBar.setTitle("");
-            TextView tv_right = (TextView) findViewById(R.id.tv_right);
-            if (!TextUtils.isEmpty(rightTitle) && tv_right != null) {
-                tv_right.setText(rightTitle);
-            }
-            mTv_title = (TextView) findViewById(R.id.tv_title);
+            mTv_title = findViewById(R.id.tv_title);
             if (!TextUtils.isEmpty(title) && mTv_title != null) {
                 mTv_title.setText(title);
             }
-        }
-    }
-
-    public void autoBack() {
-        mToolbar.setNavigationIcon(R.mipmap.icon_back);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
+            ImageView iv_back = findViewById(R.id.iv_back);
+            if (iv_back != null) {
+                iv_back.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
             }
-        });
+        }
     }
 
     public void startActivity(Class<? extends BaseActivity> clazz) {
@@ -101,5 +98,11 @@ public abstract class BaseActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | (isLight ? View.SYSTEM_UI_FLAG_LAYOUT_STABLE : View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR));
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityManager.getInstance().finish(this);
     }
 }

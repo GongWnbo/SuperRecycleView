@@ -25,6 +25,7 @@ import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.GoodsPropertyAdapter;
 import com.gwb.superrecycleview.entity.GoodsPropertyBean;
 import com.gwb.superrecycleview.ui.BaseActivity;
+import com.gwb.superrecycleview.ui.BaseFitsSystemWindowsActivity;
 import com.gwb.superrecycleview.utils.ToastUtil;
 
 import java.util.ArrayList;
@@ -37,8 +38,8 @@ import butterknife.OnClick;
 
 import static com.gyf.barlibrary.ImmersionBar.getStatusBarHeight;
 
-public class GoodsActivity extends BaseActivity implements GoodsPropertyAdapter.GoodsSelectListener {
-    private static final String TAG = "GoodsActivity";
+public class SkuActivity extends BaseFitsSystemWindowsActivity implements GoodsPropertyAdapter.GoodsSelectListener {
+    private static final String TAG = "SkuActivity";
     @BindView(R.id.rv_show)
     RecyclerView mRvShow;
     @BindView(R.id.tv_goods)
@@ -55,7 +56,7 @@ public class GoodsActivity extends BaseActivity implements GoodsPropertyAdapter.
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_goods;
+        return R.layout.activity_sku;
     }
 
     @Override
@@ -70,22 +71,7 @@ public class GoodsActivity extends BaseActivity implements GoodsPropertyAdapter.
 
     @Override
     protected void initView() {
-        //设置 paddingTop
-        ViewGroup rootView = getWindow().getDecorView().findViewById(android.R.id.content);
-        rootView.setPadding(0, getStatusBarHeight(this), 0, 0);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //5.0 以上直接设置状态栏颜色
-            getWindow().setStatusBarColor(Color.parseColor("#FF4081"));
-        } else {
-            //根布局添加占位状态栏
-            ViewGroup decorView = (ViewGroup) getWindow().getDecorView();
-            View statusBarView = new View(this);
-            ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    getStatusBarHeight(this));
-            statusBarView.setBackgroundColor(Color.parseColor("#FF4081"));
-            decorView.addView(statusBarView, lp);
-        }
-
+        mToolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         init();
         // 水印
         watermark();

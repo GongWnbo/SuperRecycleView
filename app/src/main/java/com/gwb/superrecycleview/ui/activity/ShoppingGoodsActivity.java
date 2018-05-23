@@ -61,8 +61,6 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
     ImageView         mIvShoppingCart;
     @BindView(R.id.tv_shopping_cart_count)
     TextView          mTvShoppingCartCount;
-    //    @BindView(R.id.toolbar)
-    //    Toolbar           mToolbar;
     @BindView(R.id.appBarLayout)
     AppBarLayout      mAppBarLayout;
     @BindView(R.id.tv_title)
@@ -82,7 +80,7 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
 
     @Override
     protected String setTitle() {
-        return null;
+        return "ShoppingGoods";
     }
 
     @Override
