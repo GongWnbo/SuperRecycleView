@@ -18,7 +18,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
@@ -64,9 +63,10 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
     RelativeLayout    mRlHeader;
     private ArrayList<ShopGoodsBean> mGoodsList       = new ArrayList<>();
     // 贝塞尔曲线中间过程点坐标
-    private float[]             mCurrentPosition = new float[2];
-    private int goodsCount;
-    private boolean shoppingCart = true;   // 购物车是否为空
+    private float[]                  mCurrentPosition = new float[2];
+    private int         goodsCount;
+    //    private boolean shoppingCart = true;   // 购物车是否为空
+    private BaseAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,14 +78,6 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
         initToolbar();
         // 设置状态栏的颜色
         StatusBarCompat.setStatusBarColor(this, Color.parseColor("#79C4FE"), false);
-        //        ShoppingCartDialog dialog = new ShoppingCartDialog();
-        //        dialog.show(getFragmentManager(), "shoppingCart");
-        //        dialog.setShoppingCartDialogListener(new ShoppingCartDialog.ShoppingCartDialogListener() {
-        //            @Override
-        //            public void clear() {
-        //                ToastUtil.showToast(ShopGoodsActivity.this, "删除");
-        //            }
-        //        });
     }
 
     private void initToolbar() {
@@ -120,15 +112,17 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
     }
 
     private void initData() {
+        int id = 0x100;
         for (int i = 0; i < 10; i++) {
-            mGoodsList.add(new ShopGoodsBean(0, "小猪包套餐" + i));
+            mGoodsList.add(new ShopGoodsBean(0, "小猪包套餐" + i, id++));
         }
     }
 
     private void initView() {
-        BaseAdapter adapter = new BaseAdapter(mGoodsList, R.layout.item_shop_goods, this);
+        mAdapter = new BaseAdapter(mGoodsList, R.layout.item_shop_goods, this);
         mRvGoods.setLayoutManager(new LinearLayoutManager(this));
-        mRvGoods.setAdapter(adapter);
+        mRvGoods.setAdapter(mAdapter);
+        mRvGoods.setItemAnimator(null);
     }
 
     @Override
@@ -170,7 +164,6 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
                 }
                 // 商品的数量是否显示
                 if (goodsCount == 0) {
-                    shoppingCart = true;
                     mTvShoppingCartCount.setVisibility(View.GONE);
                 } else {
                     mTvShoppingCartCount.setText(String.valueOf(goodsCount));
@@ -197,9 +190,8 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
                 int count = shopGoodsBean.getCount();
                 count++;
                 goodsCount++;
-                if (shoppingCart) {
+                if (goodsCount > 0) {
                     mTvShoppingCartCount.setVisibility(View.VISIBLE);
-                    shoppingCart = false;
                 }
                 mTvShoppingCartCount.setText(String.valueOf(goodsCount));
                 if (count == 1) {
@@ -323,10 +315,53 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
                 Logger.d("商品" + mGoodsList);
                 CartGoodsDialog dialog = new CartGoodsDialog();
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(CartGoodsDialog.CART_GOODS,mGoodsList);
+                bundle.putSerializable(CartGoodsDialog.CART_GOODS, mGoodsList);
                 dialog.setArguments(bundle);
                 dialog.show(getFragmentManager(), "cartGoods");
+                dialog.setCartGoodsDialogListener(new CartGoodsDialog.CartGoodsDialogListener() {
+                    @Override
+                    public void add(int allCount, ShopGoodsBean shopGoodsBean) {
+                        goodsCount = allCount;
+                        mTvShoppingCartCount.setText(String.valueOf(allCount));
 
+                        for (int i = 0; i < mGoodsList.size(); i++) {
+                            ShopGoodsBean bean = mGoodsList.get(i);
+                            int goodsId = bean.getGoodsId();
+                            if (goodsId == shopGoodsBean.getGoodsId()) {
+                                bean = shopGoodsBean;
+                                mAdapter.notifyItemChanged(i);
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void reduce(int allCount, ShopGoodsBean shopGoodsBean) {
+                        goodsCount = allCount;
+                        mTvShoppingCartCount.setVisibility(allCount == 0 ? View.GONE : View.VISIBLE);
+                        mTvShoppingCartCount.setText(String.valueOf(allCount));
+
+                        for (int i = 0; i < mGoodsList.size(); i++) {
+                            ShopGoodsBean bean = mGoodsList.get(i);
+                            int goodsId = bean.getGoodsId();
+                            if (goodsId == shopGoodsBean.getGoodsId()) {
+                                bean = shopGoodsBean;
+                                mAdapter.notifyItemChanged(i);
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void clear() {
+                        goodsCount = 0;
+                        mTvShoppingCartCount.setVisibility(View.GONE);
+                        for (ShopGoodsBean bean : mGoodsList) {
+                            bean.setCount(0);
+                        }
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
                 // 设置状态栏的颜色
                 //                StatusBarCompat.setStatusBarColor(this, Color.parseColor("#5D96C5"), false);
                 break;

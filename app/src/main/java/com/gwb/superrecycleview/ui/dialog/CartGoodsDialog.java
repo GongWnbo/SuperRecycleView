@@ -5,11 +5,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.BaseAdapter;
 import com.gwb.superrecycleview.adapter.BaseViewHolder;
 import com.gwb.superrecycleview.entity.ShopGoodsBean;
+import com.gwb.superrecycleview.ui.activity.ShopGoodsActivity;
 import com.gwb.superrecycleview.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.util.DensityUtil;
 
@@ -27,21 +29,30 @@ public class CartGoodsDialog extends BaseDialog implements BaseAdapter.BaseAdapt
     @BindView(R.id.rv_cart_goods)
     RecyclerView mRvCartGoods;
     List<ShopGoodsBean> list = new ArrayList<>();
-    private BaseAdapter mAdapter;
+    @BindView(R.id.tv_shopping_cart_count)
+    TextView mTvShoppingCartCount;
+    private BaseAdapter             mAdapter;
+    private int                     allCount;
+    private CartGoodsDialogListener mCartGoodsDialogListener;
 
     @Override
     protected void init() {
         Bundle bundle = getArguments();
         if (bundle != null) {
-            list = (List<ShopGoodsBean>) bundle.getSerializable(CART_GOODS);
+            List<ShopGoodsBean> cartGoodsList = (List<ShopGoodsBean>) bundle.getSerializable(CART_GOODS);
             // 将没有个数的商品移除
-            for (int i = 0; i < list.size(); i++) {
-                ShopGoodsBean shopGoodsBean = list.get(i);
-                if (shopGoodsBean.getCount() == 0) {
-                    list.remove(shopGoodsBean);
-                    i--;
+            for (int i = 0; i < cartGoodsList.size(); i++) {
+                ShopGoodsBean shopGoodsBean = cartGoodsList.get(i);
+                int count = shopGoodsBean.getCount();
+                if (count != 0) {
+                    list.add(shopGoodsBean);
+                    allCount += count;
                 }
             }
+        }
+        if (allCount > 0) {
+            mTvShoppingCartCount.setVisibility(View.VISIBLE);
+            mTvShoppingCartCount.setText(String.valueOf(allCount));
         }
         initAdapter();
     }
@@ -75,6 +86,20 @@ public class CartGoodsDialog extends BaseDialog implements BaseAdapter.BaseAdapt
                 dismiss();
                 break;
             case R.id.tv_cart_goods_clear:
+                ShoppingCartDialog dialog = new ShoppingCartDialog();
+                dialog.show(getFragmentManager(), "shoppingCart");
+                dialog.setShoppingCartDialogListener(new ShoppingCartDialog.ShoppingCartDialogListener() {
+                    @Override
+                    public void clear() {
+                        list.clear();
+                        mAdapter.notifyDataSetChanged();
+                        if (mCartGoodsDialogListener != null) {
+                            mCartGoodsDialogListener.clear();
+                            allCount = 0;
+                            mTvShoppingCartCount.setVisibility(View.GONE);
+                        }
+                    }
+                });
                 break;
             case R.id.tv_shopping_cart_pay:
                 ToastUtil.showToast(mContext, "去支付");
@@ -84,7 +109,6 @@ public class CartGoodsDialog extends BaseDialog implements BaseAdapter.BaseAdapt
 
     @Override
     public void convert(final BaseViewHolder holder, final ShopGoodsBean shopGoodsBean) {
-        int position = holder.getLayoutPosition();
         // 商品名
         holder.setTitle(R.id.tv_cart_goods_title, shopGoodsBean.getGoods());
         // 添加
@@ -95,6 +119,11 @@ public class CartGoodsDialog extends BaseDialog implements BaseAdapter.BaseAdapt
                 count++;
                 shopGoodsBean.setCount(count);
                 holder.setTitle(R.id.tv_cart_goods_count, String.valueOf(count));
+                allCount++;
+                mTvShoppingCartCount.setText(String.valueOf(allCount));
+                if (mCartGoodsDialogListener != null) {
+                    mCartGoodsDialogListener.add(allCount, shopGoodsBean);
+                }
             }
         });
         // 减少
@@ -108,12 +137,36 @@ public class CartGoodsDialog extends BaseDialog implements BaseAdapter.BaseAdapt
                     list.remove(layoutPosition);
                     mAdapter.notifyItemRemoved(layoutPosition);
                 } else {
-                    shopGoodsBean.setCount(count);
                     holder.setTitle(R.id.tv_cart_goods_count, String.valueOf(count));
+                }
+                shopGoodsBean.setCount(count);
+                allCount--;
+                if (allCount <= 0) {
+                    allCount = 0;
+                    mTvShoppingCartCount.setVisibility(View.GONE);
+                }
+                mTvShoppingCartCount.setText(String.valueOf(allCount));
+                if (mCartGoodsDialogListener != null) {
+                    mCartGoodsDialogListener.reduce(allCount, shopGoodsBean);
                 }
             }
         });
         // 数量
         holder.setTitle(R.id.tv_cart_goods_count, String.valueOf(shopGoodsBean.getCount()));
     }
+
+    public void setCartGoodsDialogListener(CartGoodsDialogListener cartGoodsDialogListener) {
+        mCartGoodsDialogListener = cartGoodsDialogListener;
+    }
+
+    public interface CartGoodsDialogListener {
+
+        void add(int allCount, ShopGoodsBean shopGoodsBean);
+
+        void reduce(int allCount, ShopGoodsBean shopGoodsBean);
+
+        void clear();
+
+    }
+
 }
