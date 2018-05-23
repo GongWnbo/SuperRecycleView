@@ -67,7 +67,6 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
     // 贝塞尔曲线中间过程点坐标
     private float[]                  mCurrentPosition = new float[2];
     private int         goodsCount;
-    //    private boolean shoppingCart = true;   // 购物车是否为空
     private BaseAdapter mAdapter;
 
     @Override
