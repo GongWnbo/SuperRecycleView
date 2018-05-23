@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -123,6 +124,11 @@ public class ShoppingCartDialog extends BaseDialog implements BaseAdapter.BaseAd
     @Override
     public float setAlpha() {
         return 0.3f;
+    }
+
+    @Override
+    public int setGravity() {
+        return Gravity.BOTTOM;
     }
 
     @Override
