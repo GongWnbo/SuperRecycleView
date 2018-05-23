@@ -8,7 +8,7 @@
 ---
 多条目的头部和尾部<br>
 ![image](https://github.com/GongWnbo/SuperRecycleView/blob/master/app/src/raw/master/images-folder/headerandfooter.gif)
-
+---
 
 
 
