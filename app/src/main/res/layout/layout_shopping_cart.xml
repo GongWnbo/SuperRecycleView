@@ -7,7 +7,7 @@
     android:layout_height="50dp"
     android:layout_gravity="bottom"
     android:background="@color/white"
-    tools:showIn="@layout/activity_shop_goods">
+    tools:showIn="@layout/activity_shopping_goods">
 
     <ImageView
         android:id="@+id/iv_shopping_cart"

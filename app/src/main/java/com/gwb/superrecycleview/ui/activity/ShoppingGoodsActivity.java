@@ -10,7 +10,6 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +30,6 @@ import com.gwb.superrecycleview.adapter.BaseAdapter;
 import com.gwb.superrecycleview.adapter.BaseViewHolder;
 import com.gwb.superrecycleview.entity.ShopGoodsBean;
 import com.gwb.superrecycleview.imp.AppBarStateChangeListener;
-import com.gwb.superrecycleview.ui.dialog.CartGoodsDialog;
 import com.gwb.superrecycleview.ui.dialog.ShoppingCartDialog;
 import com.gwb.superrecycleview.utils.ToastUtil;
 import com.gwb.superrecycleview.utils.Util;
@@ -43,7 +41,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.BaseAdapterListener<ShopGoodsBean> {
+public class ShoppingGoodsActivity extends AppCompatActivity implements BaseAdapter.BaseAdapterListener<ShopGoodsBean> {
 
     @BindView(R.id.rv_goods)
     RecyclerView mRvGoods;
@@ -72,7 +70,7 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shop_goods);
+        setContentView(R.layout.activity_shopping_goods);
         ButterKnife.bind(this);
         initData();
         initView();
@@ -171,7 +169,7 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
                     mTvShoppingCartCount.setVisibility(View.VISIBLE);
                 }
                 shopGoodsBean.setCount(count);
-                ToastUtil.showToast(ShopGoodsActivity.this, "减少");
+                ToastUtil.showToast(ShoppingGoodsActivity.this, "减少");
             }
         });
         // 增加
@@ -198,7 +196,7 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
                 if (count == 1) {
                     iv_goods_reduce.setVisibility(View.VISIBLE);
                     animOpen(iv_goods_reduce);
-                    ToastUtil.showToast(ShopGoodsActivity.this, "增加");
+                    ToastUtil.showToast(ShoppingGoodsActivity.this, "增加");
                 }
                 addGoods2CartAnim(iv_goods_add);
                 tv_goods_count.setText(String.valueOf(count));
@@ -240,9 +238,9 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
     }
 
     public void addGoods2CartAnim(ImageView goodsImageView) {
-        final ImageView goods = new ImageView(ShopGoodsActivity.this);
+        final ImageView goods = new ImageView(ShoppingGoodsActivity.this);
         goods.setImageResource(R.mipmap.icon_goods_add);
-        int size = Util.dp2px(ShopGoodsActivity.this, 24);
+        int size = Util.dp2px(ShoppingGoodsActivity.this, 24);
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(size, size);
         goods.setLayoutParams(lp);
         mCoordinatorLayout.addView(goods);
@@ -310,16 +308,16 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
-                ToastUtil.showToast(ShopGoodsActivity.this, "返回");
+                ToastUtil.showToast(ShoppingGoodsActivity.this, "返回");
                 break;
             case R.id.layout_shopping_cart:
                 Logger.d("商品" + mGoodsList);
-                CartGoodsDialog dialog = new CartGoodsDialog();
+                ShoppingCartDialog dialog = new ShoppingCartDialog();
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(CartGoodsDialog.CART_GOODS, mGoodsList);
+                bundle.putSerializable(ShoppingCartDialog.CART_GOODS, mGoodsList);
                 dialog.setArguments(bundle);
                 dialog.show(getFragmentManager(), "cartGoods");
-                dialog.setCartGoodsDialogListener(new CartGoodsDialog.CartGoodsDialogListener() {
+                dialog.setCartGoodsDialogListener(new ShoppingCartDialog.CartGoodsDialogListener() {
                     @Override
                     public void add(int allCount, ShopGoodsBean shopGoodsBean) {
                         goodsCount = allCount;
@@ -365,7 +363,7 @@ public class ShopGoodsActivity extends AppCompatActivity implements BaseAdapter.
                 });
                 break;
             case R.id.tv_shopping_cart_pay:
-                ToastUtil.showToast(ShopGoodsActivity.this, "去支付");
+                ToastUtil.showToast(ShoppingGoodsActivity.this, "去支付");
                 break;
         }
     }
