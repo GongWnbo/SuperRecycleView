@@ -2,6 +2,7 @@ package com.gwb.superrecycleview.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
@@ -13,6 +14,12 @@ public abstract class BaseFitsSystemWindowsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            setHeight();
+        }
+    }
+
+    public void setHeight() {
         // 获取actionbar的高度
         TypedArray actionbarSizeTypedArray = obtainStyledAttributes(new int[]{
                 android.R.attr.actionBarSize

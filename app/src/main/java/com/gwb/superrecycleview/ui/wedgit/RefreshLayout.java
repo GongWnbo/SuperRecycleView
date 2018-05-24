@@ -12,17 +12,20 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Scroller;
 
 import com.gwb.superrecycleview.R;
+import com.orhanobut.logger.Logger;
 
 
 /**
  * 刷新的布局，针对RecycleView
  * Created by ${GongWenbo} on 2018/5/14 0014.
  */
-public class RefreshLayout extends LinearLayout {
+public class RefreshLayout extends ViewGroup {
 
     private static final String TAG = "RefreshLayout";
     //<editor-fold desc="属性变量 property and variable">
@@ -38,6 +41,8 @@ public class RefreshLayout extends LinearLayout {
     private int             mHeaderHeight;
     private float           mLastX;
     private RecyclerView    mRecyclerView;
+    private int             mLayoutContentHeight;
+    private int             mFooterHeight;
     //</editor-fold>
 
     //<editor-fold desc="构造方法 construction methods">
@@ -76,96 +81,97 @@ public class RefreshLayout extends LinearLayout {
         // 添加尾部
         mFooterView = LayoutInflater.from(mContext).inflate(R.layout.refresh_footer, this, false);
         addView(mFooterView, getChildCount());
-        setOrientation(VERTICAL);
     }
 
-    //    @Override
-    //    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    //        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    //        int height = 0;
-    //        int width = 0;
-    //        for (int i = 0; i < getChildCount(); i++) {
-    //            View childView = getChildAt(i);
-    //            childView.measure(widthMeasureSpec,heightMeasureSpec);
-    //            height += childView.getMeasuredHeight();
-    //            width = childView.getMeasuredWidth();
-    //        }
-    //        setMeasuredDimension(View.resolveSize(width, widthMeasureSpec)
-    //                , View.resolveSize(height, heightMeasureSpec));
-    //    }
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        for (int i = 0; i < getChildCount(); i++) {
+            View childView = getChildAt(i);
+            measureChild(childView, widthMeasureSpec, heightMeasureSpec);
+        }
+    }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
+        mLayoutContentHeight = 0;
         for (int i = 0; i < getChildCount(); i++) {
-            View childView = getChildAt(i);
-            if (childView == mHeaderView) {
-                mHeaderHeight = childView.getMeasuredHeight();
-                MarginLayoutParams lp = (MarginLayoutParams) childView.getLayoutParams();
-                lp.topMargin = -mHeaderHeight;
-                childView.setLayoutParams(lp);
-            }
-        }
-
-        for (int i = 0; i < getChildCount(); i++) {
-            View childAt = getChildAt(i);
-            if (childAt instanceof RecyclerView){
-                RecyclerView recyclerView = (RecyclerView) childAt;
+            View child = getChildAt(i);
+            if (child == mHeaderView) {
+                child.layout(0, 0 - child.getMeasuredHeight(), child.getMeasuredWidth(), 0);
+                mHeaderHeight = child.getHeight();
+            } else if (child == mFooterView) {
+                child.layout(0, mLayoutContentHeight, child.getMeasuredWidth(), mLayoutContentHeight + child.getMeasuredHeight());
+                mFooterHeight = child.getHeight();
+            } else {
+                child.layout(0, mLayoutContentHeight, child.getMeasuredWidth(), mLayoutContentHeight + child.getMeasuredHeight());
+                if (child instanceof ScrollView) {
+                    mLayoutContentHeight += getMeasuredHeight();
+                }
+                mLayoutContentHeight += child.getMeasuredHeight();
             }
         }
     }
 
     //<editor-fold desc="滑动判断 judgement of slide">
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        mVelocityTracker.addMovement(event);
-        int y = (int) event.getY();
-        int x = (int) event.getX();
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                mLastY = event.getY();
-                mLastX = event.getX();
-                // 如果没有完成，终止上一次的
-                if (!mScroller.isFinished()) {
-                    mScroller.abortAnimation();
-                }
-                super.dispatchTouchEvent(event);
-                return true;
-            case MotionEvent.ACTION_MOVE:
-                int deltaY = Math.round(mLastY - y);
-                int deltaX = Math.round(mLastX - x);
-                if (deltaY < mTouchSlop) {
-                    return super.dispatchTouchEvent(event);
-                }
-                // 保证能横向滑动
-                if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                    return super.dispatchTouchEvent(event);
-                }
-                if (mRecyclerView != null) {
-                    // 竖直方向recyclerView可否下拉
-                    if (mRecyclerView.computeVerticalScrollOffset() <= 0) {
-                        return super.dispatchTouchEvent(event);
-                    }
-                    // 竖直方向recyclerView可否上拉
-                    if (mRecyclerView.computeVerticalScrollExtent() + mRecyclerView.computeVerticalScrollOffset()
-                            >= mRecyclerView.computeVerticalScrollRange()) {
-                        return super.dispatchTouchEvent(event);
-                    }
-                }
-
-                Log.d(TAG, "dispatchTouchEvent: " + y + ",mHeaderHeight:" + mHeaderHeight);
-                scrollBy(0, deltaY);
-                mLastY = y;
-                postInvalidate();
-                return true;
-            case MotionEvent.ACTION_UP:
-                mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
-                int yVelocity = (int) mVelocityTracker.getYVelocity();
-                fling(-yVelocity);
-                break;
-        }
-        return super.dispatchTouchEvent(event);
-    }
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent event) {
+//        mVelocityTracker.addMovement(event);
+//        int y = (int) event.getY();
+//        int x = (int) event.getX();
+//        switch (event.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//                mLastY = event.getY();
+//                mLastX = event.getX();
+//                // 如果没有完成，终止上一次的
+//                if (!mScroller.isFinished()) {
+//                    mScroller.abortAnimation();
+//                }
+//                //                super.dispatchTouchEvent(event);
+//                return true;
+//            case MotionEvent.ACTION_MOVE:
+//                int deltaY = Math.round(mLastY - y);
+//                int deltaX = Math.round(mLastX - x);
+//                //                if (deltaY < mTouchSlop) {
+//                //                    return super.dispatchTouchEvent(event);
+//                //                }
+//                // 保证能横向滑动
+//                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+//                    return super.dispatchTouchEvent(event);
+//                }
+//                if (mRecyclerView != null) {
+//
+//                    // 竖直方向recyclerView可否下拉
+//                    if (mRecyclerView.computeVerticalScrollOffset() <= 0) {
+//                        Logger.d("yy= 可以下拉");
+//                        scrollBy(0, deltaY);
+//                        mLastY = y;
+//                        postInvalidate();
+//                    }
+//                    // 竖直方向recyclerView可否上拉
+//                    if (mRecyclerView.computeVerticalScrollExtent() + mRecyclerView.computeVerticalScrollOffset()
+//                            >= mRecyclerView.computeVerticalScrollRange()) {
+//                        Logger.d("yy= 可以上拉");
+//                        scrollBy(0, deltaY);
+//                        mLastY = y;
+//                        postInvalidate();
+//                    }
+//
+//                    scrollBy(0, deltaY);
+//                    mLastY = y;
+//                    postInvalidate();
+//                    return true;
+//                }
+//                break;
+//            //                            return super.dispatchTouchEvent(event);
+//            case MotionEvent.ACTION_UP:
+//                mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
+//                int yVelocity = (int) mVelocityTracker.getYVelocity();
+//                fling(-yVelocity);
+//                break;
+//        }
+//        return super.dispatchTouchEvent(event);
+//    }
 
     public void fling(int velocityY) {
         mScroller.fling(getScrollX(), getScrollY(), 0, velocityY, 0, 0, 0, 0);
@@ -196,4 +202,8 @@ public class RefreshLayout extends LinearLayout {
     //</editor-fold>
 
 
+    @Override
+    public LayoutParams generateLayoutParams(AttributeSet attrs) {
+        return new MarginLayoutParams(mContext, attrs);
+    }
 }

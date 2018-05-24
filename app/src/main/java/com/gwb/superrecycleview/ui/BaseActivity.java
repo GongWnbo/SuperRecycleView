@@ -33,7 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getLayoutId());
         ButterKnife.bind(this);
         setStatusBarTextLight(false);
-        initToolBar(setTitle(), setRightTitle());
+        initToolBar(setTitle());
         initView();
         initData(savedInstanceState);
         ActivityManager.getInstance().addActivity(this);
@@ -43,8 +43,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected abstract int getLayoutId();
 
     protected abstract String setTitle();
-
-    protected abstract String setRightTitle();
 
     protected abstract void initView();
 
@@ -56,7 +54,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected abstract void initData(Bundle savedInstanceState);
 
-    protected void initToolBar(String title, String rightTitle) {
+    protected void initToolBar(String title) {
         mToolbar = findViewById(R.id.toolbar);
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);

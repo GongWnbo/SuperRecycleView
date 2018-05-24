@@ -39,11 +39,6 @@ public class SteamActivity extends BaseFitsSystemWindowsActivity {
     }
 
     @Override
-    protected String setRightTitle() {
-        return null;
-    }
-
-    @Override
     protected void initView() {
         mToolbar.setBackgroundColor(getResources().getColor(R.color.colorAccent));
         for (int i = 0; i < 20; i++) {
