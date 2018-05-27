@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,8 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,7 +21,6 @@ import com.google.gson.Gson;
 import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.GoodsPropertyAdapter;
 import com.gwb.superrecycleview.entity.GoodsPropertyBean;
-import com.gwb.superrecycleview.ui.BaseActivity;
 import com.gwb.superrecycleview.ui.BaseFitsSystemWindowsActivity;
 import com.gwb.superrecycleview.utils.ToastUtil;
 
@@ -36,7 +32,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.gyf.barlibrary.ImmersionBar.getStatusBarHeight;
 
 public class SkuActivity extends BaseFitsSystemWindowsActivity implements GoodsPropertyAdapter.GoodsSelectListener {
     private static final String TAG = "SkuActivity";

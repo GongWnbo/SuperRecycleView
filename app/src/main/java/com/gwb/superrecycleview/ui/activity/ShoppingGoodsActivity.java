@@ -1,23 +1,19 @@
 package com.gwb.superrecycleview.ui.activity;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -26,15 +22,16 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.githang.statusbar.StatusBarCompat;
 import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.BaseAdapter;
 import com.gwb.superrecycleview.adapter.BaseViewHolder;
+import com.gwb.superrecycleview.entity.ShopGoods;
 import com.gwb.superrecycleview.entity.ShopGoodsBean;
 import com.gwb.superrecycleview.imp.AppBarStateChangeListener;
 import com.gwb.superrecycleview.ui.BaseActivity;
 import com.gwb.superrecycleview.ui.dialog.DiscountCouponDialog;
 import com.gwb.superrecycleview.ui.dialog.ShoppingCartDialog;
+import com.gwb.superrecycleview.utils.ShoppingCartHistoryManager;
 import com.gwb.superrecycleview.utils.ToastUtil;
 import com.gwb.superrecycleview.utils.Util;
 import com.orhanobut.logger.Logger;
@@ -43,10 +40,8 @@ import com.scwang.smartrefresh.layout.util.DensityUtil;
 import java.util.ArrayList;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import static com.gyf.barlibrary.ImmersionBar.getStatusBarHeight;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.BaseAdapterListener<ShopGoodsBean> {
 
@@ -72,6 +67,10 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
     private float[]                  mCurrentPosition = new float[2];
     private int         allCount;
     private BaseAdapter mAdapter;
+    private int RC_CAMERA_AND_LOCATION = 0x1;
+    // 商品的id
+    private int GOODS_ID               = 12;
+
 
     @Override
     protected int getLayoutId() {
@@ -134,13 +133,22 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
 
     private void initData() {
         int id = 0x100;
-        for (int i = 0; i < 10; i++) {
-            mGoodsList.add(new ShopGoodsBean(0, "小猪包套餐" + i, id++));
+        ShopGoods shopGoods = ShoppingCartHistoryManager.getInstance().get(GOODS_ID);
+        if (shopGoods != null) {
+            mGoodsList = shopGoods.getList();
+        } else {
+            for (int i = 0; i < 10; i++) {
+                mGoodsList.add(new ShopGoodsBean(0, "小猪包套餐" + i, id++));
+            }
         }
     }
 
+    String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+
     @Override
     protected void initView() {
+        EasyPermissions.requestPermissions(this, null, RC_CAMERA_AND_LOCATION, perms);
+
         initData();
         initToolbar();
         initHeight();
@@ -423,5 +431,16 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
             bean.setCount(0);
         }
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (allCount != 0) {
+            ShopGoods shopGoods = new ShopGoods(mGoodsList);
+            ShoppingCartHistoryManager.getInstance().add(GOODS_ID, shopGoods);
+        } else {
+            ShoppingCartHistoryManager.getInstance().delete(GOODS_ID);
+        }
     }
 }
