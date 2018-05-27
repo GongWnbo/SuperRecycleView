@@ -42,11 +42,6 @@ public class HeaderAndFooterActivity extends BaseFitsSystemWindowsActivity imple
     }
 
     @Override
-    protected String setRightTitle() {
-        return null;
-    }
-
-    @Override
     protected void initView() {
         mToolbar.setBackgroundColor(getResources().getColor(R.color.colorAccent));
         initAdapter();

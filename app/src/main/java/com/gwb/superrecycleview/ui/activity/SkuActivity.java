@@ -60,11 +60,6 @@ public class SkuActivity extends BaseFitsSystemWindowsActivity implements GoodsP
     }
 
     @Override
-    protected String setRightTitle() {
-        return null;
-    }
-
-    @Override
     protected void initView() {
         mToolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         init();

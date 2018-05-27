@@ -82,11 +82,6 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
         return "ShoppingGoods";
     }
 
-    @Override
-    protected String setRightTitle() {
-        return null;
-    }
-
     private void initToolbar() {
         mAppBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
             @Override
