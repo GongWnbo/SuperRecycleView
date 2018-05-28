@@ -190,16 +190,17 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
                 ShopGoodsBean shopGoodsBean = mGoodsList.get(position);
                 int count = shopGoodsBean.getCount();
                 count--;
-                allCount--;
                 // 防止过快点击出现多个关闭动画
                 if (count == 0) {
                     animClose(iv_goods_reduce);
                     tv_goods_count.setText("");
                     // 考虑到用户点击过快
+                    allCount--;
                 } else if (count < 0) {
                     // 防止过快点击出现商品数为负数
                     count = 0;
                 } else {
+                    allCount--;
                     tv_goods_count.setText(String.valueOf(count));
                 }
                 // 商品的数量是否显示
