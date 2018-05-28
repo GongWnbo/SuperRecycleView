@@ -1,6 +1,7 @@
 package com.gwb.superrecycleview.ui.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -18,10 +19,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        getClass().getSimpleName();
     }
 
     @OnClick({R.id.btn_headerAndFooter, R.id.btn_sku, R.id.btn_steam, R.id.btn_shoppingGoods})
     public void onViewClicked(View view) {
+        Class<MainActivity> mainActivityClass = MainActivity.class;
         switch (view.getId()) {
             case R.id.btn_headerAndFooter:
                 startActivity(HeaderAndFooterActivity.class);

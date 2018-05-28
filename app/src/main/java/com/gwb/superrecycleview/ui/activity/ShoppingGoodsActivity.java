@@ -62,6 +62,7 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
     TextView          mTvTitle;
     @BindView(R.id.rl_header)
     RelativeLayout    mRlHeader;
+    String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
     private ArrayList<ShopGoodsBean> mGoodsList       = new ArrayList<>();
     // 贝塞尔曲线中间过程点坐标
     private float[]                  mCurrentPosition = new float[2];
@@ -69,8 +70,7 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
     private BaseAdapter mAdapter;
     private int RC_CAMERA_AND_LOCATION = 0x1;
     // 商品的id
-    private int GOODS_ID               = 12;
-
+    private int SHOP_ID               = 12;
 
     @Override
     protected int getLayoutId() {
@@ -128,7 +128,12 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
 
     private void initData() {
         int id = 0x100;
-        ShopGoods shopGoods = ShoppingCartHistoryManager.getInstance().get(GOODS_ID);
+        ShopGoods shopGoods = ShoppingCartHistoryManager.getInstance().get(SHOP_ID);
+        int allCount = ShoppingCartHistoryManager.getInstance().getAllGoodsCount(ShoppingGoodsActivity.this, SHOP_ID);
+        showToast("商品总数" + allCount);
+        // 根据缓存是否显示
+        mTvShoppingCartCount.setVisibility(allCount == 0 ? View.GONE : View.VISIBLE);
+        mTvShoppingCartCount.setText(String.valueOf(allCount));
         if (shopGoods != null) {
             mGoodsList = shopGoods.getList();
         } else {
@@ -137,8 +142,6 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
             }
         }
     }
-
-    String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
 
     @Override
     protected void initView() {
@@ -240,6 +243,7 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
             }
         });
         int count = bean.getCount();
+        allCount += count;
         tv_goods_count.setText(count == 0 ? "" : String.valueOf(count));
         iv_goods_reduce.setVisibility(count == 0 ? View.INVISIBLE : View.VISIBLE);
         // 标题
@@ -433,9 +437,11 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
         super.onDestroy();
         if (allCount != 0) {
             ShopGoods shopGoods = new ShopGoods(mGoodsList);
-            ShoppingCartHistoryManager.getInstance().add(GOODS_ID, shopGoods);
+            ShoppingCartHistoryManager.getInstance().add(SHOP_ID, shopGoods)
+                    .putAllGoodsCount(ShoppingGoodsActivity.this, SHOP_ID, allCount);
         } else {
-            ShoppingCartHistoryManager.getInstance().delete(GOODS_ID);
+            ShoppingCartHistoryManager.getInstance().delete(SHOP_ID)
+                    .putAllGoodsCount(ShoppingGoodsActivity.this, SHOP_ID, allCount);
         }
     }
 }
