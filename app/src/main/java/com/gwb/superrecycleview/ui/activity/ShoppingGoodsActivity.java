@@ -70,7 +70,7 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
     private BaseAdapter mAdapter;
     private int RC_CAMERA_AND_LOCATION = 0x1;
     // 商品的id
-    private int SHOP_ID               = 12;
+    private int SHOP_ID                = 12;
 
     @Override
     protected int getLayoutId() {
@@ -130,6 +130,7 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
         int id = 0x100;
         ShopGoods shopGoods = ShoppingCartHistoryManager.getInstance().get(SHOP_ID);
         int allCount = ShoppingCartHistoryManager.getInstance().getAllGoodsCount(ShoppingGoodsActivity.this, SHOP_ID);
+        this.allCount += allCount;
         showToast("商品总数" + allCount);
         // 根据缓存是否显示
         mTvShoppingCartCount.setVisibility(allCount == 0 ? View.GONE : View.VISIBLE);
@@ -243,7 +244,6 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
             }
         });
         int count = bean.getCount();
-        allCount += count;
         tv_goods_count.setText(count == 0 ? "" : String.valueOf(count));
         iv_goods_reduce.setVisibility(count == 0 ? View.INVISIBLE : View.VISIBLE);
         // 标题
