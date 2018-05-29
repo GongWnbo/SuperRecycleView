@@ -1,12 +1,10 @@
 package com.gwb.superrecycleview.utils;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 
 import com.gwb.superrecycleview.entity.ShopGoods;
-import com.gwb.superrecycleview.ui.activity.ShoppingGoodsActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -130,6 +128,5 @@ public class ShoppingCartHistoryManager {
         }
         return this;
     }
-
 
 }

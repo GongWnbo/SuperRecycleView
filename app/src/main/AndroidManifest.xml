@@ -25,9 +25,6 @@
             android:configChanges="orientation|locale|screenSize"
             android:theme="@style/TranslucentTheme"/>
         <activity
-            android:name=".ui.activity.RecycleViewActivity"
-            android:configChanges="orientation|locale|screenSize"/>
-        <activity
             android:name=".ui.activity.ShoppingGoodsActivity"
             android:configChanges="orientation|locale|screenSize">
             <!--<intent-filter>-->
