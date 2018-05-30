@@ -40,8 +40,8 @@ public abstract class AppBarStateChangeListener implements AppBarLayout.OnOffset
     }
 
     public enum State {
-        EXPANDED,
-        COLLAPSED,
-        IDLE
+        EXPANDED,       // 展开状态
+        COLLAPSED,      // 折叠状态
+        IDLE            // 准备状态
     }
 }
