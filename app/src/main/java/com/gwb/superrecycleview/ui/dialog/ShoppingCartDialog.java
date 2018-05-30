@@ -19,7 +19,6 @@ import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.BaseAdapter;
 import com.gwb.superrecycleview.adapter.BaseViewHolder;
 import com.gwb.superrecycleview.entity.ShopGoodsBean;
-import com.gwb.superrecycleview.ui.activity.ShoppingGoodsActivity;
 import com.gwb.superrecycleview.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.util.DensityUtil;
 
@@ -105,6 +104,7 @@ public class ShoppingCartDialog extends BaseDialog implements BaseAdapter.BaseAd
     }
 
     private void initAdapter() {
+        // 如果商品个数大于指定数时,高度写死,其他wrap_content
         if (list.size() >= 4) {
             ViewGroup.LayoutParams lp = mRvCartGoods.getLayoutParams();
             lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
