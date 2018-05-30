@@ -272,6 +272,16 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
         ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(imageView, "rotation", 0, 180);
         animatorSet.play(translationAnim).with(rotationAnim);
         animatorSet.setDuration(TIME).start();
+        animatorSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // TODO: 2018/5/19 因为属性动画会改变位置,所以当结束的时候,要回退的到原来的位置,同时用补间动画的位移不好控制
+                ObjectAnimator oa = ObjectAnimator.ofFloat(imageView, "translationX", addLeft - reduceLeft, 0);
+                oa.setDuration(0);
+                oa.start();
+                imageView.setVisibility(View.GONE);
+            }
+        });
     }
 
     /**
