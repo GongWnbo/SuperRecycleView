@@ -20,6 +20,28 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         getClass().getSimpleName();
+
+        range(0);
+
+        range(1);
+        range(10);
+
+        range(11);
+        range(20);
+
+        range(91);
+        range(100);
+
+        int color = R.color.colorAccent;
+    }
+
+    public void range(int num) {
+        int pic = 0;
+        if (num != 0) {
+            int i = (num - 1) / 10;
+            pic = i + 1;
+        }
+        System.out.println("图片" + pic + "\n");
     }
 
     @OnClick({R.id.btn_headerAndFooter, R.id.btn_sku, R.id.btn_steam, R.id.btn_shoppingGoods})
