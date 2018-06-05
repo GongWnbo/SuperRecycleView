@@ -27,6 +27,7 @@ import com.gwb.superrecycleview.adapter.BaseAdapter;
 import com.gwb.superrecycleview.adapter.BaseViewHolder;
 import com.gwb.superrecycleview.entity.ShopGoods;
 import com.gwb.superrecycleview.entity.ShopGoodsBean;
+import com.gwb.superrecycleview.entity.StoreGoodsBean;
 import com.gwb.superrecycleview.imp.AppBarStateChangeListener;
 import com.gwb.superrecycleview.ui.BaseActivity;
 import com.gwb.superrecycleview.ui.dialog.DiscountCouponDialog;
@@ -38,6 +39,7 @@ import com.orhanobut.logger.Logger;
 import com.scwang.smartrefresh.layout.util.DensityUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -68,9 +70,9 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
     private float[]                  mCurrentPosition = new float[2];
     private int         allCount;
     private BaseAdapter mAdapter;
-    private int RC_CAMERA_AND_LOCATION = 0x1;
+    private int    RC_CAMERA_AND_LOCATION = 0x1;
     // 商品的id
-    private int SHOP_ID                = 12;
+    private String SHOP_ID                = "12";
 
     @Override
     protected int getLayoutId() {
@@ -133,18 +135,23 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
 
     private void initData() {
         int id = 0x100;
-        ShopGoods shopGoods = ShoppingCartHistoryManager.getInstance().get(SHOP_ID);
-        int allCount = ShoppingCartHistoryManager.getInstance().getAllGoodsCount(ShoppingGoodsActivity.this, SHOP_ID);
-        this.allCount += allCount;
+        HashMap<String, Integer> hashMap = ShoppingCartHistoryManager.getInstance().get(SHOP_ID);
+        this.allCount = ShoppingCartHistoryManager.getInstance().getAllGoodsCount(SHOP_ID);
         showToast("商品总数" + allCount);
         // 根据缓存是否显示
         mTvShoppingCartCount.setVisibility(allCount == 0 ? View.GONE : View.VISIBLE);
         mTvShoppingCartCount.setText(String.valueOf(allCount));
-        if (shopGoods != null) {
-            mGoodsList = shopGoods.getList();
-        } else {
-            for (int i = 0; i < 10; i++) {
-                mGoodsList.add(new ShopGoodsBean(0, "小猪包套餐" + i, id++));
+        // TODO: 2018/6/5 0005 模拟请求到的数据
+        for (int i = 0; i < 10; i++) {
+            mGoodsList.add(new ShopGoodsBean(0, "小猪包套餐" + i, id++ + ""));
+        }
+        if (hashMap != null) {
+            for (ShopGoodsBean bean : mGoodsList) {
+                String goodsId = bean.getGoodsId();
+                if (hashMap.containsKey(goodsId)) {
+                    Integer count = hashMap.get(goodsId);
+                    bean.setCount(count);
+                }
             }
         }
     }
@@ -422,8 +429,8 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
         // 遍历，格局id查找对象
         for (int i = 0; i < mGoodsList.size(); i++) {
             ShopGoodsBean bean = mGoodsList.get(i);
-            int goodsId = bean.getGoodsId();
-            if (goodsId == shopGoodsBean.getGoodsId()) {
+            String goodsId = bean.getGoodsId();
+            if (goodsId.equals(shopGoodsBean.getGoodsId())) {
                 bean = shopGoodsBean;
                 mAdapter.notifyItemChanged(i);
                 break;
@@ -444,12 +451,18 @@ public class ShoppingGoodsActivity extends BaseActivity implements BaseAdapter.B
     protected void onDestroy() {
         super.onDestroy();
         if (allCount != 0) {
-            ShopGoods shopGoods = new ShopGoods(mGoodsList);
-            ShoppingCartHistoryManager.getInstance().add(SHOP_ID, shopGoods)
-                    .putAllGoodsCount(ShoppingGoodsActivity.this, SHOP_ID, allCount);
+            HashMap<String, Integer> hashMap = new HashMap<>();
+            StoreGoodsBean storeGoodsBean = new StoreGoodsBean(hashMap);
+            for (ShopGoodsBean bean : mGoodsList) {
+                int count = bean.getCount();
+                String goodsId = bean.getGoodsId();
+                if (count != 0) {
+                    hashMap.put(goodsId, count);
+                }
+            }
+            ShoppingCartHistoryManager.getInstance().add(SHOP_ID, storeGoodsBean);
         } else {
-            ShoppingCartHistoryManager.getInstance().delete(SHOP_ID)
-                    .putAllGoodsCount(ShoppingGoodsActivity.this, SHOP_ID, allCount);
+            ShoppingCartHistoryManager.getInstance().delete(SHOP_ID);
         }
     }
 }

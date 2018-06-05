@@ -9,19 +9,19 @@ public class ShopGoodsBean implements Serializable {
 
     private int    count;
     private String goods;
-    private int    goodsId;
+    private String    goodsId;
 
-    public ShopGoodsBean(int count, String goods, int goodsId) {
+    public ShopGoodsBean(int count, String goods, String goodsId) {
         this.count = count;
         this.goods = goods;
         this.goodsId = goodsId;
     }
 
-    public int getGoodsId() {
+    public String getGoodsId() {
         return goodsId;
     }
 
-    public void setGoodsId(int goodsId) {
+    public void setGoodsId(String goodsId) {
         this.goodsId = goodsId;
     }
 
