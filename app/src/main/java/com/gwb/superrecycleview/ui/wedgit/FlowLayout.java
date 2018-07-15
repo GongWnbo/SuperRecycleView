@@ -1,154 +1,104 @@
 package com.gwb.superrecycleview.ui.wedgit;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * 流式布局
- * Created by ${GongWenbo} on 2018/5/3 0003.
- */
-
 public class FlowLayout extends ViewGroup {
 
-    // 每一行view的集合
-    private List<List<View>> mAllViews   = new ArrayList<>();
-    // 每一行的高度
-    private List<Integer>    mLineHeight = new ArrayList<>();
+    private static final String TAG = "FlowLayout";
 
     public FlowLayout(Context context) {
-        super(context);
+        this(context, null);
     }
 
-    public FlowLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    public FlowLayout(Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, 0);
     }
 
-    public FlowLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public FlowLayout(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int sizeWidth = MeasureSpec.getSize(widthMeasureSpec);
-        int sizeHeight = MeasureSpec.getSize(heightMeasureSpec);
-        int modeWidth = MeasureSpec.getMode(widthMeasureSpec);
-        int modeHeight = MeasureSpec.getMode(heightMeasureSpec);
+        int withMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int withSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-        // 如果是wrap_content
         int width = 0;
         int height = 0;
-        // 记录每一行的宽度与高度
-        int lineWidth = 0;
-        int lineHeight = 0;
-        // view个数
-        int childCount = getChildCount();
-        for (int i = 0; i < childCount; i++) {
+
+        int widthLine = 0;
+
+        for (int i = 0; i < getChildCount(); i++) {
             View childView = getChildAt(i);
-            measureChild(childView, widthMeasureSpec, heightMeasureSpec);
+            childView.measure(widthMeasureSpec, heightMeasureSpec);
             MarginLayoutParams lp = (MarginLayoutParams) childView.getLayoutParams();
             int childWidth = childView.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
             int childHeight = childView.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
-            // 换行 判断 当前的宽度大于 开辟新行
-            if (lineWidth + childWidth > sizeWidth - getPaddingLeft() - getPaddingRight()) {
-                // 对比得到最大的宽度
-                width = Math.max(width, lineWidth);
-                // 重置lineWidth
-                lineWidth = childWidth;
-                // 记录行高
-                height += lineHeight;
-                // 重置lineHeight
-                lineHeight = childHeight;
+            // TODO: 2018/6/11 换行
+            if (widthLine + childWidth > withSize) {
+                height += childHeight;
+                width = Math.max(widthLine, width);
+                // TODO: 2018/6/11 这边要特别注意，要在获取最大值的后面
+                widthLine = childWidth;
+                Log.d(TAG, "onMeasure: 换行=" + height);
             } else {
-                // 宽度累加
-                lineWidth += childWidth;
-                // 得到当前行最大的高度
-                lineHeight = Math.max(lineHeight, childHeight);
+                Log.d(TAG, "onMeasure: widthLine=" + widthLine);
+                widthLine += childWidth;
             }
-            // 最后一个的时候，不管是换行，还是未换行，前面都没有处理
-            if (i == childCount - 1) {
-                width = Math.max(width, lineWidth);
-                height += lineHeight;
+            if (i == getChildCount() - 1) {
+                width = Math.max(widthLine, width);
+                height += childHeight;
+                Log.d(TAG, "onMeasure: 最后一行=" + height);
             }
-            setMeasuredDimension(modeWidth == MeasureSpec.EXACTLY ? sizeWidth : width + getPaddingLeft() + getPaddingRight(),
-                    modeHeight == MeasureSpec.EXACTLY ? sizeHeight : height + getPaddingTop() + getPaddingBottom());
         }
+        // TODO: 2018/6/19 考虑到padding的情况存在
+        width += getPaddingLeft() + getPaddingRight();
+        height += getPaddingTop() + getPaddingBottom();
+
+        setMeasuredDimension(withMode == MeasureSpec.EXACTLY ? withSize : width
+                , heightMode == MeasureSpec.EXACTLY ? heightSize : height);
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        mAllViews.clear();
-        mLineHeight.clear();
-
-        // 当前ViewGroup的宽度
-        int width = getWidth();
-
-        int lineWidth = 0;
-        int lineHeight = 0;
-
-        // 获取每一行的view集合
-        List<View> viewList = new ArrayList<>();
-        int childCount = getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View childView = getChildAt(i);
-            MarginLayoutParams lp = (MarginLayoutParams) childView.getLayoutParams();
-            int childWidth = childView.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
-            int childHeight = childView.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
-            // 换行
-            if (lineWidth + childWidth > width - getPaddingLeft() - getPaddingRight()) {
-                // 记录当前行的Views
-                mAllViews.add(viewList);
-                // 记录LineHeight
-                mLineHeight.add(lineHeight);
-                // 重置当前行的Views
-                viewList = new ArrayList<>();
-                // 重置宽
-                lineWidth = childWidth;
-                // 重置高
-                lineHeight = childHeight;
-            } else {
-                lineWidth += childWidth;
-                lineHeight = Math.max(lineHeight, childHeight);
-            }
-            viewList.add(childView);
-        }
-        // 处理最后一行
-        mAllViews.add(viewList);
-        mLineHeight.add(lineHeight);
-
-        // 行的个数
-        int lineNum = mAllViews.size();
-        // view的初始位置
-        int left = getPaddingLeft();
         int top = getPaddingTop();
-        for (int i = 0; i < lineNum; i++) {
-            viewList = mAllViews.get(i);
-            lineHeight = mLineHeight.get(i);
-
-            for (View view : viewList) {
-                if (view.getVisibility() == GONE) {
-                    continue;
-                }
-                MarginLayoutParams lp = (MarginLayoutParams) view.getLayoutParams();
-                int lc = left + lp.leftMargin;
-                int tc = top + lp.topMargin;
-                int rc = lc + view.getMeasuredWidth();
-                int bc = tc + view.getMeasuredHeight();
-                view.layout(lc, tc, rc, bc);
-                left += view.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
+        int left = getPaddingLeft();
+        int widthLine = 0;
+        int width = getWidth();
+        for (int i = 0; i < getChildCount(); i++) {
+            View childView = getChildAt(i);
+            if (childView.getVisibility() == GONE) {
+                continue;
             }
-            left = getPaddingLeft();
-            top += lineHeight;
+            MarginLayoutParams lp = (MarginLayoutParams) childView.getLayoutParams();
+            int childWidth = childView.getMeasuredWidth();
+            int childHeight = childView.getMeasuredHeight();
+            // TODO: 2018/6/16  item的宽度
+            int tempWidth = childWidth + lp.leftMargin + lp.rightMargin;
+            // TODO: 2018/6/16 换行
+            if (widthLine + tempWidth > width) {
+                left = getPaddingLeft();
+                top += childHeight + lp.topMargin + lp.bottomMargin;
+                widthLine = tempWidth;
+            } else {
+                widthLine += tempWidth;
+            }
+            int lc = left + lp.leftMargin;
+            int tc = top + lp.topMargin;
+            int rc = lc + childWidth;
+            int bc = tc + childHeight;
+            childView.layout(lc, tc, rc, bc);
+            left += childWidth + lp.rightMargin;
         }
+
     }
 
-    @Override
-    public LayoutParams generateLayoutParams(AttributeSet attrs) {
-        return new MarginLayoutParams(getContext(), attrs);
-    }
 }
