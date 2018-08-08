@@ -16,7 +16,7 @@ import android.widget.TextView;
  */
 
 public class BaseViewHolder extends RecyclerView.ViewHolder {
-    public static View              itemView;
+    public     View              itemView;
     private        SparseArray<View> views;
     private        Context           mContext;
 

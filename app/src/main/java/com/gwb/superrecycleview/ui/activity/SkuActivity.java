@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
+import com.gwb.superrecycleview.App;
 import com.gwb.superrecycleview.R;
 import com.gwb.superrecycleview.adapter.GoodsPropertyAdapter;
 import com.gwb.superrecycleview.entity.GoodsPropertyBean;
@@ -178,9 +179,9 @@ public class SkuActivity extends BaseFitsSystemWindowsActivity implements GoodsP
     public void onViewClicked() {
         String title = mTvGoods.getText().toString();
         if (title.contains(remind)) {
-            ToastUtil.showToast(this, "请选择商品");
+            ToastUtil.showToast(App.getApp(), "请选择商品");
         } else
-            ToastUtil.showToast(this, "下单成功");
+            ToastUtil.showToast(App.getApp(), "下单成功");
     }
 
     @Override

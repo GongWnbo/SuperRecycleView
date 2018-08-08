@@ -15,8 +15,8 @@ public class HeaderAndFooterWrapper extends RecyclerView.Adapter {
 
     private static final int               BASE_ITEM_TYPE_HEADER = 100000;
     private static final int               BASE_ITEM_TYPE_FOOTER = 200000;
-    private static final SparseArray<View> mHeaderViews          = new SparseArray<>();
-    private static final SparseArray<View> mFooterViews          = new SparseArray<>();
+    private  final SparseArray<View> mHeaderViews          = new SparseArray<>();
+    private  final SparseArray<View> mFooterViews          = new SparseArray<>();
     private RecyclerView.Adapter mInnerAdapter;
 
     public HeaderAndFooterWrapper(RecyclerView.Adapter innerAdapter) {
